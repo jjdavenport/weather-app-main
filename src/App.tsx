@@ -14,6 +14,7 @@ import {
 } from "./components/content";
 
 function App() {
+  const [loading, setLoading] = useState(true);
   const [lat, setLat] = useState(null);
   const [long, setLong] = useState(null);
 
@@ -41,10 +42,10 @@ function App() {
           <Title />
           <Search />
           <Button />
-          <Main />
+          <Main loading={loading} />
           <List />
           <DailyList />
-          <HourlyList />
+          <HourlyList loading={loading} />
         </Container>
         <Footer />
       </Wrapper>

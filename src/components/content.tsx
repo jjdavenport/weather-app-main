@@ -2,6 +2,8 @@ import logo from "../assets/images/logo.svg";
 import settings from "../assets/images/icon-units.svg";
 import chevron from "../assets/images/icon-dropdown.svg";
 import search from "../assets/images/icon-search.svg";
+import cross from "../assets/images/icon-error.svg";
+import reload from "../assets/images/icon-loading.svg";
 import type React from "react";
 import { useState } from "react";
 
@@ -12,7 +14,7 @@ type Prop = {
 export const Wrapper = ({ children }: Prop) => {
   return (
     <>
-      <div className="flex h-full min-h-screen w-full flex-col bg-neutral-900 text-lg">
+      <div className="flex h-full min-h-screen w-full flex-col gap-4 bg-neutral-900 text-lg">
         {children}
       </div>
     </>
@@ -93,7 +95,7 @@ export const Title = () => {
 export const Search = () => {
   return (
     <>
-      <div className="flex w-11/12 gap-4 rounded-lg bg-neutral-700 px-4 py-2">
+      <div className="flex w-11/12 gap-4 rounded-lg bg-neutral-800 px-4 py-2">
         <img src={search} alt="search" />
         <input
           className="font-DM-Sans w-full placeholder:text-neutral-200 focus:outline-none"
@@ -184,22 +186,39 @@ export const Button = () => {
   );
 };
 
-export const Main = () => {
+type MainProp = {
+  loading: boolean;
+};
+
+export const Main = ({ loading }: MainProp) => {
   return (
     <>
-      <main></main>
+      <main className="flex w-11/12 items-center justify-center rounded-lg bg-neutral-800 p-1">
+        {loading && (
+          <div className="flex flex-col items-center justify-center gap-1">
+            <span className="font-DM-Sans text-neutral-0">
+              .<span className="">.</span>.
+            </span>
+            <span className="font-DM-Sans text-neutral-0">Loading…</span>
+          </div>
+        )}
+      </main>
     </>
   );
 };
 
-export const List = () => {
+type ListProp = {
+  loading: boolean;
+};
+
+export const List = ({ loading }: ListProp) => {
   return (
     <>
       <ul className="grid w-11/12 grid-cols-2 grid-rows-2 gap-4">
-        <ListItem text="Feels like" />
-        <ListItem text="Humidity" />
-        <ListItem text="Wind" />
-        <ListItem text="Precipitation" />
+        <ListItem loading={loading} text="Feels like" />
+        <ListItem loading={loading} text="Humidity" />
+        <ListItem loading={loading} text="Wind" />
+        <ListItem loading={loading} text="Precipitation" />
       </ul>
     </>
   );
@@ -208,14 +227,15 @@ export const List = () => {
 type ListItemProps = {
   text: string;
   unit: string;
+  loading: boolean;
 };
 
-const ListItem = ({ text, unit }: ListItemProps) => {
+const ListItem = ({ text, unit, loading }: ListItemProps) => {
   return (
     <>
-      <li className="font-DM-Sans text-neutral-0 rounded-lg border border-neutral-600 bg-neutral-700 p-4">
+      <li className="font-DM-Sans text-neutral-0 flex flex-col gap-1 rounded-lg border border-neutral-600 bg-neutral-800 p-4">
         <span>{text}</span>
-        <span>{unit}</span>
+        <span>{loading ? unit : "_"}</span>
       </li>
     </>
   );
@@ -224,9 +244,17 @@ const ListItem = ({ text, unit }: ListItemProps) => {
 export const DailyList = () => {
   return (
     <>
-      <section className="w-11/12">
+      <section className="flex w-11/12 flex-col gap-2">
         <span className="text-neutral-0 font-DM-Sans">Daily forecast</span>
-        <ul className="grid grid-cols-2 grid-rows-3"></ul>
+        <ul className="grid grid-cols-2 grid-rows-3 gap-4">
+          <DailyListItem />
+          <DailyListItem />
+          <DailyListItem />
+          <DailyListItem />
+          <DailyListItem />
+          <DailyListItem />
+          <DailyListItem />
+        </ul>
       </section>
     </>
   );
@@ -243,7 +271,7 @@ type DailyListItemProps = {
 const DailyListItem = ({ day, src, alt, high, low }: DailyListItemProps) => {
   return (
     <>
-      <li>
+      <li className="rounded-lg border border-neutral-600 bg-neutral-700 p-16">
         <span>{day}</span>
         <img src={src} alt={alt} />
         <div>
@@ -255,15 +283,28 @@ const DailyListItem = ({ day, src, alt, high, low }: DailyListItemProps) => {
   );
 };
 
-export const HourlyList = () => {
+type HourlyListProp = {
+  loading: boolean;
+};
+
+export const HourlyList = ({ loading }: HourlyListProp) => {
   return (
     <>
-      <section className="w-11/12 rounded-lg bg-neutral-700 p-4">
+      <section className="flex w-11/12 flex-col gap-4 rounded-lg bg-neutral-800 p-4">
         <div className="flex justify-between">
           <span className="text-neutral-0 font-DM-Sans">Hourly forecast</span>
-          <HourlyDropDown />
+          <HourlyDropDown loading={loading} />
         </div>
-        <ul></ul>
+        <ul className="flex flex-col gap-4">
+          <HourlyListItem />
+          <HourlyListItem />
+          <HourlyListItem />
+          <HourlyListItem />
+          <HourlyListItem />
+          <HourlyListItem />
+          <HourlyListItem />
+          <HourlyListItem />
+        </ul>
       </section>
     </>
   );
@@ -279,7 +320,7 @@ type HourlyListItemProps = {
 const HourlyListItem = ({ src, alt, time, temp }: HourlyListItemProps) => {
   return (
     <>
-      <li>
+      <li className="h-10 w-full rounded-lg border border-neutral-600 bg-neutral-700">
         <div>
           <img src={src} alt={alt} />
           <span>{time}</span>
@@ -290,15 +331,46 @@ const HourlyListItem = ({ src, alt, time, temp }: HourlyListItemProps) => {
   );
 };
 
-const HourlyDropDown = () => {
+type HourlyDropDownProp = {
+  loading: boolean;
+};
+
+const HourlyDropDown = ({ loading }: HourlyDropDownProp) => {
   const [text, setText] = useState("Tuesday");
   return (
     <>
       <div>
         <button className="font-DM-Sans text-neutral-0 flex gap-2 rounded-lg bg-neutral-600 px-2 py-1">
-          {text} <img src={chevron} alt="chevron" />
+          {loading ? "-" : text} <img src={chevron} alt="chevron" />
         </button>
       </div>
+    </>
+  );
+};
+
+export const Error = () => {
+  return (
+    <>
+      <section>
+        <img src={cross} alt="error" />
+        <span>Something went wrong</span>
+        <p>
+          We couldn't connect server (API error).Please try again in a few
+          moments.
+        </p>
+        <button>
+          <img src={reload} alt="reload" />
+          Retry
+        </button>
+      </section>
+    </>
+  );
+};
+
+export const NoResult = () => {
+  return (
+    <>
+      <span>No search result found!</span>
     </>
   );
 };
