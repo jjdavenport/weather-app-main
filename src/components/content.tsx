@@ -5,8 +5,9 @@ import search from "../assets/images/icon-search.svg";
 import cross from "../assets/images/icon-error.svg";
 import reload from "../assets/images/icon-loading.svg";
 import tick from "../assets/images/icon-checkmark.svg";
+import loading from "../assets/images/icon-loading.svg";
 import type React from "react";
-import { useState, type SetStateAction } from "react";
+import { useRef, useState, type SetStateAction } from "react";
 
 type Prop = {
   children: React.ReactNode;
@@ -147,23 +148,77 @@ const HeaderMenu = ({ unit }: HeaderMenuProp) => {
   );
 };
 
-export const Search = () => {
+type SearchProp = {
+  searching: boolean;
+};
+
+export const Search = ({ searching }: SearchProp) => {
+  const [open, setOpen] = useState(false);
+  const inputRef = useRef(null);
+
+  const handleClick = () => {
+    inputRef.current && inputRef.current.focus();
+    setOpen(!open);
+  };
+
   return (
     <>
-      <div className="flex w-11/12 gap-4 rounded-lg bg-neutral-800 px-4 py-2">
+      <button
+        onClick={handleClick}
+        className="relative flex w-11/12 gap-4 rounded-lg bg-neutral-800 px-4 py-2"
+      >
         <img src={search} alt="search" />
         <input
+          ref={inputRef}
           className="font-DM-Sans w-full placeholder:text-neutral-200 focus:outline-none"
           type="text"
           placeholder="Search for a place…"
         />
-      </div>
+        {open && searching && <SearchInProgress />}
+        {open && !searching && <SearchList />}
+      </button>
     </>
   );
 };
 
 const SearchList = () => {
-  return <></>;
+  const list = ["City Name", "City Name", "City Name", "City Name"];
+  return (
+    <>
+      <ul className="absolute top-12 left-0 flex w-full flex-col gap-1 rounded-lg bg-neutral-800 p-2 shadow-lg">
+        {list.map((i, index) => (
+          <SearchListItem text={i} key={index} />
+        ))}
+      </ul>
+    </>
+  );
+};
+
+type SearchListitemProp = {
+  text: string;
+};
+
+const SearchListItem = ({ text }: SearchListitemProp) => {
+  return (
+    <>
+      <li>
+        <button className="text-neutral-0 w-full cursor-pointer rounded-lg p-1 outline-neutral-600 hover:bg-neutral-700 hover:outline">
+          {text}
+        </button>
+      </li>
+    </>
+  );
+};
+
+const SearchInProgress = () => {
+  return (
+    <>
+      <div className="absolute top-14 left-0 flex w-full gap-4 rounded-lg bg-neutral-800 p-2 shadow-lg">
+        <img src={loading} className="animate-spin" alt="loading" />
+        <span className="text-neutral-0 font-DM-Sans">Search in progress</span>
+      </div>
+    </>
+  );
 };
 
 type HeaderListItemsProp = {

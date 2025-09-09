@@ -15,6 +15,7 @@ import {
 
 function App() {
   const [loading, setLoading] = useState(false);
+  const [searching, setSearching] = useState(false);
   const [lat, setLat] = useState(null);
   const [long, setLong] = useState(null);
   const [weather, setWeather] = useState(null);
@@ -59,7 +60,7 @@ function App() {
         <Container>
           <Header />
           <Title />
-          <Search />
+          <Search searching={searching} />
           <Button />
           <Main loading={loading} />
           <List loading={loading} />
