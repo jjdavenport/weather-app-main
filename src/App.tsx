@@ -14,9 +14,10 @@ import {
 } from "./components/content";
 
 function App() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [lat, setLat] = useState(null);
   const [long, setLong] = useState(null);
+  const [weather, setWeather] = useState(null);
 
   const fetchLatLong = async () => {
     const response = await fetch("https://ipapi.co/json/");
@@ -25,14 +26,32 @@ function App() {
     setLong(result.longitude);
   };
 
+  const fetchWeather = async () => {
+    const response = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m,weather_code`,
+    );
+    const result = await response.json();
+    setWeather(result);
+  };
+
   useEffect(() => {
     fetchLatLong();
   }, []);
 
   useEffect(() => {
+    if (lat != null && long != null) {
+      fetchWeather();
+    }
+  }, [lat, long]);
+
+  useEffect(() => {
     console.log(lat);
     console.log(long);
   }, [lat, long]);
+
+  useEffect(() => {
+    console.log(weather);
+  }, [weather]);
 
   return (
     <>
@@ -43,7 +62,7 @@ function App() {
           <Search />
           <Button />
           <Main loading={loading} />
-          <List />
+          <List loading={loading} />
           <DailyList />
           <HourlyList loading={loading} />
         </Container>

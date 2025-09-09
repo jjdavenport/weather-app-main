@@ -4,8 +4,9 @@ import chevron from "../assets/images/icon-dropdown.svg";
 import search from "../assets/images/icon-search.svg";
 import cross from "../assets/images/icon-error.svg";
 import reload from "../assets/images/icon-loading.svg";
+import tick from "../assets/images/icon-checkmark.svg";
 import type React from "react";
-import { useState } from "react";
+import { useState, type SetStateAction } from "react";
 
 type Prop = {
   children: React.ReactNode;
@@ -53,32 +54,33 @@ export const Footer = () => {
 };
 
 export const Header = () => {
+  const [menu, setMenu] = useState(false);
   return (
     <>
-      <header className="flex w-11/12 justify-between">
+      <header className="relative flex w-11/12 justify-between">
         <img className="object-contain" src={logo} alt="logo" />
-        <HeaderDropdown />
+        <HeaderDropdown onClick={() => setMenu(!menu)} />
+        {menu && <HeaderMenu unit="imperial" />}
       </header>
     </>
   );
 };
 
-const HeaderDropdown = () => {
-  return (
-    <div>
-      <button className="font-DM-Sans text-neutral-0 flex gap-1 rounded-lg bg-neutral-700 px-2 py-1">
-        <img src={settings} alt="settings" />
-        Units <img src={chevron} alt="chevron" />
-      </button>
-    </div>
-  );
+type HeaderDropdownProp = {
+  onClick: () => void;
 };
 
-const HeaderMenu = () => {
+const HeaderDropdown = ({ onClick }: HeaderDropdownProp) => {
   return (
-    <>
-      <ul></ul>
-    </>
+    <nav>
+      <button
+        onClick={onClick}
+        className="font-DM-Sans text-neutral-0 flex cursor-pointer gap-2 rounded-lg bg-neutral-700 px-3 py-1"
+      >
+        <img className="object-contain" src={settings} alt="settings" />
+        Units <img className="object-contain" src={chevron} alt="chevron" />
+      </button>
+    </nav>
   );
 };
 
@@ -88,6 +90,59 @@ export const Title = () => {
       <h1 className="font-DM-Sans text-neutral-0 w-11/12 text-center text-6xl font-bold">
         How's the sky looking today?
       </h1>
+    </>
+  );
+};
+
+type HeaderMenuProp = {
+  unit: string;
+};
+
+const HeaderMenu = ({ unit }: HeaderMenuProp) => {
+  const [selected, setSelected] = useState({
+    temperature: "Celsius (°C)",
+    wind: "km/h",
+    precipitation: "Millimeters (mm)",
+  });
+  return (
+    <>
+      <div className="absolute top-12 flex w-full flex-col gap-2 rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg">
+        <button className="text-neutral-0 p-1 text-left">
+          Switch to {unit}
+        </button>
+        <div className="flex flex-col divide-y divide-neutral-600">
+          <HeaderListItem
+            setButton={(value) =>
+              setSelected((prev) => ({ ...prev, temperature: value }))
+            }
+            selected={selected.temperature}
+            label="Temperature"
+            buttonOne="Celsius (°C)"
+            buttonTwo="Fahrenheit (°F)"
+          />
+          <HeaderListItem
+            setButton={(value) =>
+              setSelected((prev) => ({ ...prev, wind: value }))
+            }
+            selected={selected.wind}
+            label="Wind Speed"
+            buttonOne="km/h"
+            buttonTwo="mph"
+          />
+          <HeaderListItem
+            setButton={(value) =>
+              setSelected((prev) => ({
+                ...prev,
+                precipitation: value,
+              }))
+            }
+            selected={selected.precipitation}
+            label="Precipitation"
+            buttonOne="Millimeters (mm)"
+            buttonTwo="Inches (in)"
+          />
+        </div>
+      </div>
     </>
   );
 };
@@ -107,62 +162,69 @@ export const Search = () => {
   );
 };
 
-type SearchListProp = {
-  unit: string;
+const SearchList = () => {
+  return <></>;
 };
 
-const SearchList = ({ unit }: SearchListProp) => {
-  return (
-    <>
-      <ul>
-        <button>Switch to {unit}</button>
-        <SearchListItem
-          label="Temperature"
-          buttonOne="Celsius (°C)"
-          buttonTwo="Fahrenheit (°F)"
-        />
-        <SearchListItem label="Wind Speed" buttonOne="km/h" buttonTwo="mph" />
-        <SearchListItem
-          label="Precipitation"
-          buttonOne="Millimeters (mm)"
-          buttonTwo="Inches (in)"
-        />
-      </ul>
-    </>
-  );
-};
-
-type SearchListItemsProp = {
+type HeaderListItemsProp = {
   label: string;
   buttonOne: string;
   buttonTwo: string;
+  selected: string;
+  setButton: React.Dispatch<SetStateAction<boolean>>;
 };
 
-const SearchListItem = ({
+const HeaderListItem = ({
   label,
   buttonOne,
   buttonTwo,
-}: SearchListItemsProp) => {
+  selected,
+  setButton,
+}: HeaderListItemsProp) => {
   return (
     <>
-      <li>
-        <label>{label}</label>
-        <SearchListButton text={buttonOne} />
-        <SearchListButton text={buttonTwo} />
+      <li className="flex flex-col">
+        <label className="p-1 text-neutral-200">{label}</label>
+        <HeaderListButton
+          onClick={setButton}
+          selected={selected}
+          text={buttonOne}
+        />
+        <HeaderListButton
+          onClick={setButton}
+          selected={selected}
+          text={buttonTwo}
+        />
       </li>
     </>
   );
 };
 
-type SearchListButtonProp = {
+type HeaderListButtonProp = {
   text: string;
+  selected: string;
+  onClick: () => void;
 };
 
-const SearchListButton = ({ text }: SearchListButtonProp) => {
+const HeaderListButton = ({
+  text,
+  selected,
+  onClick,
+}: HeaderListButtonProp) => {
   return (
-    <>
-      <button>{text}</button>
-    </>
+    <button
+      onClick={() => onClick(text)}
+      className={`${selected === text ? "bg-neutral-700" : "bg-transparent"} text-neutral-0 flex cursor-pointer justify-between rounded-lg p-1 text-left`}
+    >
+      {selected === text ? (
+        <>
+          {text}
+          <img src={tick} alt="tick" />
+        </>
+      ) : (
+        <>{text}</>
+      )}
+    </button>
   );
 };
 
@@ -288,12 +350,19 @@ type HourlyListProp = {
 };
 
 export const HourlyList = ({ loading }: HourlyListProp) => {
+  const [menu, setMenu] = useState(false);
+  const [state, setState] = useState("Tuesday");
   return (
     <>
-      <section className="flex w-11/12 flex-col gap-4 rounded-lg bg-neutral-800 p-4">
+      <section className="relative flex w-11/12 flex-col gap-4 rounded-lg bg-neutral-800 p-4">
         <div className="flex justify-between">
           <span className="text-neutral-0 font-DM-Sans">Hourly forecast</span>
-          <HourlyDropDown loading={loading} />
+          <HourlyDropDown
+            text={state}
+            loading={loading}
+            menu={menu}
+            setMenu={setMenu}
+          />
         </div>
         <ul className="flex flex-col gap-4">
           <HourlyListItem />
@@ -305,6 +374,13 @@ export const HourlyList = ({ loading }: HourlyListProp) => {
           <HourlyListItem />
           <HourlyListItem />
         </ul>
+        {menu && (
+          <HourlyDropDownList
+            state={state}
+            setMenu={setMenu}
+            setState={setState}
+          />
+        )}
       </section>
     </>
   );
@@ -333,17 +409,94 @@ const HourlyListItem = ({ src, alt, time, temp }: HourlyListItemProps) => {
 
 type HourlyDropDownProp = {
   loading: boolean;
+  menu: boolean;
+  setMenu: React.Dispatch<SetStateAction<boolean>>;
+  text: string;
 };
 
-const HourlyDropDown = ({ loading }: HourlyDropDownProp) => {
-  const [text, setText] = useState("Tuesday");
+const HourlyDropDown = ({
+  loading,
+  menu,
+  setMenu,
+  text,
+}: HourlyDropDownProp) => {
   return (
     <>
-      <div>
-        <button className="font-DM-Sans text-neutral-0 flex gap-2 rounded-lg bg-neutral-600 px-2 py-1">
+      <nav>
+        <button
+          onClick={() => setMenu(!menu)}
+          className="font-DM-Sans text-neutral-0 flex cursor-pointer gap-2 rounded-lg bg-neutral-600 px-2 py-1"
+        >
           {loading ? "-" : text} <img src={chevron} alt="chevron" />
         </button>
-      </div>
+      </nav>
+    </>
+  );
+};
+
+type HourlyDropDownListProps = {
+  setState: React.Dispatch<SetStateAction<string>>;
+  setMenu: React.Dispatch<SetStateAction<boolean>>;
+  state: string;
+};
+
+const HourlyDropDownList = ({
+  setState,
+  setMenu,
+  state,
+}: HourlyDropDownListProps) => {
+  const days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+  ];
+
+  const handleClick = (text: string) => {
+    setState(text);
+    setMenu(false);
+  };
+
+  return (
+    <>
+      <ul className="font-DM-Sans text-neutral-0 absolute top-14 left-0 w-full rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg">
+        {days.map((i, index) => (
+          <HourlyDropDownButton
+            state={state}
+            onClick={handleClick}
+            key={index}
+            text={i}
+          />
+        ))}
+      </ul>
+    </>
+  );
+};
+
+type HourlyDropDownButtonProp = {
+  text: string;
+  onClick: () => void;
+  state: string;
+};
+
+const HourlyDropDownButton = ({
+  text,
+  onClick,
+  state,
+}: HourlyDropDownButtonProp) => {
+  return (
+    <>
+      <li>
+        <button
+          className={`${state === text ? "bg-neutral-700" : "bg-transparent"} w-full cursor-pointer rounded-lg`}
+          onClick={() => onClick(text)}
+        >
+          {text}
+        </button>
+      </li>
     </>
   );
 };
