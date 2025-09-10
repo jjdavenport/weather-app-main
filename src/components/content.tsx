@@ -77,7 +77,7 @@ const HeaderDropdown = ({ onClick, open }: HeaderDropdownProp) => {
     <nav>
       <button
         onClick={onClick}
-        className="font-DM-Sans text-neutral-0 flex cursor-pointer gap-2 rounded-lg bg-neutral-700 px-3 py-1"
+        className="font-DM-Sans text-neutral-0 focus:outline-neutral-0 flex cursor-pointer gap-2 rounded-lg bg-neutral-800 px-3 py-1 transition-colors hover:bg-neutral-700 focus:outline-2 focus:outline-offset-[0.1875rem]"
       >
         <img className="object-contain" src={settings} alt="settings" />
         Units
@@ -139,7 +139,7 @@ const HeaderMenu = ({ onClose }: HeaderMenu) => {
       <div className="absolute top-12 z-50 flex w-full flex-col gap-2 rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg">
         <button
           onClick={handleClick}
-          className="text-neutral-0 cursor-pointer rounded-lg p-1 text-left hover:bg-neutral-700"
+          className="text-neutral-0 focus:outline-neutral-0 cursor-pointer rounded-lg p-1 text-left hover:bg-neutral-700 focus:outline focus:outline-offset-1"
         >
           Switch to {selected.unit}
         </button>
@@ -195,20 +195,20 @@ export const Search = ({ searching }: SearchProp) => {
 
   return (
     <>
-      <button
+      <div
         onClick={handleClick}
-        className="relative flex w-11/12 gap-4 rounded-lg bg-neutral-800 px-4 py-2"
+        className="focus-within:outline-neutral-0 relative flex w-11/12 cursor-pointer gap-4 rounded-lg bg-neutral-800 px-4 py-2 transition-colors focus-within:outline-2 focus-within:outline-offset-[0.1875rem] hover:bg-neutral-700"
       >
         <img src={search} alt="search" />
         <input
           ref={inputRef}
-          className="font-DM-Sans w-full placeholder:text-neutral-200 focus:outline-none"
+          className="font-DM-Sans w-full cursor-pointer placeholder:text-neutral-200 focus:outline-none"
           type="text"
           placeholder="Search for a place…"
         />
         {open && searching && <SearchInProgress />}
         {open && !searching && <SearchList />}
-      </button>
+      </div>
     </>
   );
 };
@@ -217,7 +217,7 @@ const SearchList = () => {
   const list = ["City Name", "City Name", "City Name", "City Name"];
   return (
     <>
-      <ul className="absolute top-12 left-0 flex w-full flex-col gap-1 rounded-lg bg-neutral-800 p-2 shadow-lg">
+      <ul className="absolute top-14 left-0 flex w-full flex-col gap-1 rounded-lg bg-neutral-800 p-2 shadow-lg">
         {list.map((i, index) => (
           <SearchListItem text={i} key={index} />
         ))}
@@ -234,7 +234,7 @@ const SearchListItem = ({ text }: SearchListitemProp) => {
   return (
     <>
       <li>
-        <button className="text-neutral-0 w-full cursor-pointer rounded-lg p-1 outline-neutral-600 hover:bg-neutral-700 hover:outline">
+        <button className="text-neutral-0 focus:outline-neutral-0 w-full cursor-pointer rounded-lg p-1 outline-neutral-600 hover:bg-neutral-700 hover:outline focus:outline focus:outline-offset-1">
           {text}
         </button>
       </li>
@@ -315,20 +315,10 @@ const HeaderListButton = ({
   );
 };
 
-export const SearchButton = () => {
-  return (
-    <>
-      <li>
-        <button></button>
-      </li>
-    </>
-  );
-};
-
 export const Button = () => {
   return (
     <>
-      <button className="font-DM-Sans text-neutral-0 w-11/12 rounded-lg bg-blue-500 p-2">
+      <button className="font-DM-Sans text-neutral-0 w-11/12 cursor-pointer rounded-lg bg-blue-500 p-2 transition-colors hover:bg-blue-700 focus:outline-2 focus:outline-offset-[0.1875rem] focus:outline-blue-500">
         Search
       </button>
     </>
@@ -420,7 +410,7 @@ type DailyListItemProps = {
 const DailyListItem = ({ day, src, alt, high, low }: DailyListItemProps) => {
   return (
     <>
-      <li className="rounded-lg border border-neutral-600 bg-neutral-700 p-16">
+      <li className="rounded-lg border border-neutral-600 bg-neutral-800 p-16">
         <span>{day}</span>
         <img src={src} alt={alt} />
         <div>
@@ -512,7 +502,7 @@ const HourlyDropDown = ({
       <nav>
         <button
           onClick={onClick}
-          className="font-DM-Sans text-neutral-0 flex cursor-pointer gap-2 rounded-lg bg-neutral-600 px-2 py-1"
+          className="font-DM-Sans text-neutral-0 focus:outline-neutral-0 flex cursor-pointer gap-2 rounded-lg bg-neutral-600 px-3 py-1 transition-colors hover:bg-neutral-700 focus:outline-2 focus:outline-offset-[0.1875rem]"
         >
           {loading ? "-" : text}{" "}
           <img
@@ -554,7 +544,7 @@ const HourlyDropDownList = ({
 
   return (
     <>
-      <ul className="font-DM-Sans text-neutral-0 absolute top-14 left-0 w-full rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg">
+      <ul className="font-DM-Sans text-neutral-0 absolute top-16 left-0 flex w-full flex-col gap-2 rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg">
         {days.map((i, index) => (
           <HourlyDropDownButton
             state={state}
@@ -583,7 +573,7 @@ const HourlyDropDownButton = ({
     <>
       <li>
         <button
-          className={`${state === text ? "bg-neutral-700" : "bg-transparent"} w-full cursor-pointer rounded-lg`}
+          className={`${state === text ? "bg-neutral-700" : "bg-transparent"} focus:outline-neutral-0 w-full cursor-pointer rounded-lg p-1 transition-colors hover:bg-neutral-700 focus:outline focus:outline-offset-1`}
           onClick={() => onClick(text)}
         >
           {text}
@@ -605,7 +595,7 @@ export const Error = () => {
           We couldn't connect server (API error).Please try again in a few
           moments.
         </p>
-        <button className="text-neutral-0 font-DM-Sans flex items-center gap-2 rounded-lg bg-neutral-800 px-4 py-1">
+        <button className="text-neutral-0 font-DM-Sans focus:outline-neutral-0 flex cursor-pointer items-center gap-2 rounded-lg bg-neutral-800 px-4 py-1 transition-colors hover:bg-neutral-700 focus:outline-2 focus:outline-offset-[0.1875rem]">
           <RefreshCw className="w-4" />
           Retry
         </button>
@@ -614,7 +604,7 @@ export const Error = () => {
   );
 };
 
-export const NoResult = () => {
+export const NoResults = () => {
   return (
     <>
       <span>No search result found!</span>

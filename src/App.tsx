@@ -12,12 +12,14 @@ import {
   DailyList,
   HourlyList,
   Error,
+  NoResults,
 } from "./components/content";
 
 function App() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
+  const [results, setResults] = useState(true);
   const [lat, setLat] = useState(null);
   const [long, setLong] = useState(null);
   const [weather, setWeather] = useState(null);
@@ -57,27 +59,31 @@ function App() {
   }, [weather]);
 
   return (
-    <>
-      <Wrapper>
-        <Container>
-          <Header />
-          {error ? (
-            <Error />
-          ) : (
-            <>
-              <Title />
-              <Search searching={searching} />
-              <Button />
-              <Main loading={loading} />
-              <List loading={loading} />
-              <DailyList />
-              <HourlyList loading={loading} />
-            </>
-          )}
-        </Container>
-        <Footer />
-      </Wrapper>
-    </>
+    <Wrapper>
+      <Container>
+        <Header />
+        {error ? (
+          <Error />
+        ) : (
+          <>
+            <Title />
+            <Search searching={searching} />
+            <Button />
+            {results ? (
+              <>
+                <Main loading={loading} />
+                <List loading={loading} />
+                <DailyList />
+                <HourlyList loading={loading} />
+              </>
+            ) : (
+              <NoResults />
+            )}
+          </>
+        )}
+      </Container>
+      <Footer />
+    </Wrapper>
   );
 }
 
