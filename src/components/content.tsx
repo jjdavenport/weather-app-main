@@ -3,10 +3,10 @@ import settings from "../assets/images/icon-units.svg";
 import chevron from "../assets/images/icon-dropdown.svg";
 import search from "../assets/images/icon-search.svg";
 import cross from "../assets/images/icon-error.svg";
-import reload from "../assets/images/icon-loading.svg";
 import tick from "../assets/images/icon-checkmark.svg";
 import loading from "../assets/images/icon-loading.svg";
 import type React from "react";
+import { RefreshCw } from "lucide-react";
 import { useRef, useState, type SetStateAction } from "react";
 
 type Prop = {
@@ -60,8 +60,8 @@ export const Header = () => {
     <>
       <header className="relative flex w-11/12 justify-between">
         <img className="object-contain" src={logo} alt="logo" />
-        <HeaderDropdown onClick={() => setMenu(!menu)} />
-        {menu && <HeaderMenu unit="imperial" />}
+        <HeaderDropdown open={menu} onClick={() => setMenu(!menu)} />
+        {menu && <HeaderMenu onClose={() => setMenu(false)} />}
       </header>
     </>
   );
@@ -69,9 +69,10 @@ export const Header = () => {
 
 type HeaderDropdownProp = {
   onClick: () => void;
+  open: boolean;
 };
 
-const HeaderDropdown = ({ onClick }: HeaderDropdownProp) => {
+const HeaderDropdown = ({ onClick, open }: HeaderDropdownProp) => {
   return (
     <nav>
       <button
@@ -79,7 +80,12 @@ const HeaderDropdown = ({ onClick }: HeaderDropdownProp) => {
         className="font-DM-Sans text-neutral-0 flex cursor-pointer gap-2 rounded-lg bg-neutral-700 px-3 py-1"
       >
         <img className="object-contain" src={settings} alt="settings" />
-        Units <img className="object-contain" src={chevron} alt="chevron" />
+        Units
+        <img
+          className={`${open ? "rotate-180" : "rotate-0"} object-contain transition-all duration-100`}
+          src={chevron}
+          alt="chevron"
+        />
       </button>
     </nav>
   );
@@ -95,21 +101,47 @@ export const Title = () => {
   );
 };
 
-type HeaderMenuProp = {
-  unit: string;
+type HeaderMenu = {
+  onClose: () => void;
 };
 
-const HeaderMenu = ({ unit }: HeaderMenuProp) => {
+const HeaderMenu = ({ onClose }: HeaderMenu) => {
   const [selected, setSelected] = useState({
+    unit: "Imperial",
     temperature: "Celsius (°C)",
     wind: "km/h",
     precipitation: "Millimeters (mm)",
   });
+
+  const handleClick = () => {
+    if (selected.unit === "Imperial") {
+      setSelected((prev) => ({
+        ...prev,
+        unit: "Metric",
+        temperature: "Fahrenheit (°F)",
+        wind: "mph",
+        precipitation: "Inches (in)",
+      }));
+    } else {
+      setSelected((prev) => ({
+        ...prev,
+        unit: "Imperial",
+        precipitation: "Millimeters (mm)",
+        wind: "km/h",
+        temperature: "Celsius (°C)",
+      }));
+    }
+    onClose();
+  };
+
   return (
     <>
-      <div className="absolute top-12 flex w-full flex-col gap-2 rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg">
-        <button className="text-neutral-0 p-1 text-left">
-          Switch to {unit}
+      <div className="absolute top-12 z-50 flex w-full flex-col gap-2 rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg">
+        <button
+          onClick={handleClick}
+          className="text-neutral-0 cursor-pointer rounded-lg p-1 text-left hover:bg-neutral-700"
+        >
+          Switch to {selected.unit}
         </button>
         <div className="flex flex-col divide-y divide-neutral-600">
           <HeaderListItem
@@ -415,8 +447,8 @@ export const HourlyList = ({ loading }: HourlyListProp) => {
           <HourlyDropDown
             text={state}
             loading={loading}
-            menu={menu}
-            setMenu={setMenu}
+            open={menu}
+            onClick={() => setMenu(!menu)}
           />
         </div>
         <ul className="flex flex-col gap-4">
@@ -464,25 +496,30 @@ const HourlyListItem = ({ src, alt, time, temp }: HourlyListItemProps) => {
 
 type HourlyDropDownProp = {
   loading: boolean;
-  menu: boolean;
-  setMenu: React.Dispatch<SetStateAction<boolean>>;
+  open: boolean;
+  onClick: () => void;
   text: string;
 };
 
 const HourlyDropDown = ({
   loading,
-  menu,
-  setMenu,
+  open,
+  onClick,
   text,
 }: HourlyDropDownProp) => {
   return (
     <>
       <nav>
         <button
-          onClick={() => setMenu(!menu)}
+          onClick={onClick}
           className="font-DM-Sans text-neutral-0 flex cursor-pointer gap-2 rounded-lg bg-neutral-600 px-2 py-1"
         >
-          {loading ? "-" : text} <img src={chevron} alt="chevron" />
+          {loading ? "-" : text}{" "}
+          <img
+            className={`${open ? "rotate-180" : "rotate-0"} transition-all duration-100`}
+            src={chevron}
+            alt="chevron"
+          />
         </button>
       </nav>
     </>
@@ -559,15 +596,17 @@ const HourlyDropDownButton = ({
 export const Error = () => {
   return (
     <>
-      <section>
-        <img src={cross} alt="error" />
-        <span>Something went wrong</span>
-        <p>
+      <section className="flex flex-1 flex-col items-center justify-center gap-4">
+        <img className="w-12 object-contain" src={cross} alt="error" />
+        <span className="text-neutral-0 font-Bricolage-Grotesque text-5xl font-medium">
+          Something went wrong
+        </span>
+        <p className="font-DM-Sans w-96 text-center leading-5 text-neutral-200">
           We couldn't connect server (API error).Please try again in a few
           moments.
         </p>
-        <button>
-          <img src={reload} alt="reload" />
+        <button className="text-neutral-0 font-DM-Sans flex items-center gap-2 rounded-lg bg-neutral-800 px-4 py-1">
+          <RefreshCw className="w-4" />
           Retry
         </button>
       </section>

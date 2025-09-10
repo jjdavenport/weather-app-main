@@ -11,9 +11,11 @@ import {
   List,
   DailyList,
   HourlyList,
+  Error,
 } from "./components/content";
 
 function App() {
+  const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
   const [lat, setLat] = useState(null);
@@ -59,13 +61,19 @@ function App() {
       <Wrapper>
         <Container>
           <Header />
-          <Title />
-          <Search searching={searching} />
-          <Button />
-          <Main loading={loading} />
-          <List loading={loading} />
-          <DailyList />
-          <HourlyList loading={loading} />
+          {error ? (
+            <Error />
+          ) : (
+            <>
+              <Title />
+              <Search searching={searching} />
+              <Button />
+              <Main loading={loading} />
+              <List loading={loading} />
+              <DailyList />
+              <HourlyList loading={loading} />
+            </>
+          )}
         </Container>
         <Footer />
       </Wrapper>
