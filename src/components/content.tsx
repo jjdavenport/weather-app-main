@@ -16,7 +16,7 @@ type Prop = {
 export const Wrapper = ({ children }: Prop) => {
   return (
     <>
-      <div className="flex h-full min-h-screen w-full flex-col gap-4 bg-neutral-900 text-lg">
+      <div className="flex h-full min-h-screen w-full flex-col items-center gap-4 bg-neutral-900 text-lg">
         {children}
       </div>
     </>
@@ -26,7 +26,7 @@ export const Wrapper = ({ children }: Prop) => {
 export const Container = ({ children }: Prop) => {
   return (
     <>
-      <div className="flex flex-1 flex-col items-center gap-4 pt-4">
+      <div className="flex w-full max-w-6xl flex-1 flex-col items-center gap-4 pt-4 md:max-w-5xl lg:gap-10">
         {children}
       </div>
     </>
@@ -58,7 +58,7 @@ export const Header = () => {
   const [menu, setMenu] = useState(false);
   return (
     <>
-      <header className="relative flex w-11/12 justify-between">
+      <header className="relative flex w-11/12 justify-between lg:w-full">
         <img className="object-contain" src={logo} alt="logo" />
         <HeaderDropdown open={menu} onClick={() => setMenu(!menu)} />
         {menu && <HeaderMenu onClose={() => setMenu(false)} />}
@@ -94,7 +94,7 @@ const HeaderDropdown = ({ onClick, open }: HeaderDropdownProp) => {
 export const Title = () => {
   return (
     <>
-      <h1 className="font-DM-Sans text-neutral-0 w-11/12 text-center text-6xl font-bold">
+      <h1 className="font-DM-Sans text-neutral-0 w-11/12 text-center text-6xl font-bold lg:w-full">
         How's the sky looking today?
       </h1>
     </>
@@ -180,11 +180,24 @@ const HeaderMenu = ({ onClose }: HeaderMenu) => {
   );
 };
 
+type FormProp = {
+  searching: boolean;
+};
+
+export const Form = ({ searching }: FormProp) => {
+  return (
+    <form className="flex w-full flex-col items-center gap-2 lg:w-7/12 lg:flex-row lg:gap-4">
+      <Search searching={searching} />
+      <SearchButton />
+    </form>
+  );
+};
+
 type SearchProp = {
   searching: boolean;
 };
 
-export const Search = ({ searching }: SearchProp) => {
+const Search = ({ searching }: SearchProp) => {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
 
@@ -197,7 +210,7 @@ export const Search = ({ searching }: SearchProp) => {
     <>
       <div
         onClick={handleClick}
-        className="focus-within:outline-neutral-0 relative flex w-11/12 cursor-pointer gap-4 rounded-lg bg-neutral-800 px-4 py-2 transition-colors focus-within:outline-2 focus-within:outline-offset-[0.1875rem] hover:bg-neutral-700"
+        className="focus-within:outline-neutral-0 relative flex w-11/12 cursor-pointer gap-4 rounded-lg bg-neutral-800 px-4 py-2 transition-colors focus-within:outline-2 focus-within:outline-offset-[0.1875rem] hover:bg-neutral-700 lg:w-full"
       >
         <img src={search} alt="search" />
         <input
@@ -315,10 +328,10 @@ const HeaderListButton = ({
   );
 };
 
-export const Button = () => {
+const SearchButton = () => {
   return (
     <>
-      <button className="font-DM-Sans text-neutral-0 w-11/12 cursor-pointer rounded-lg bg-blue-500 p-2 transition-colors hover:bg-blue-700 focus:outline-2 focus:outline-offset-[0.1875rem] focus:outline-blue-500">
+      <button className="font-DM-Sans text-neutral-0 w-11/12 cursor-pointer rounded-lg bg-blue-500 p-2 transition-colors hover:bg-blue-700 focus:outline-2 focus:outline-offset-[0.1875rem] focus:outline-blue-500 lg:w-3/12">
         Search
       </button>
     </>
@@ -332,7 +345,7 @@ type MainProp = {
 export const Main = ({ loading }: MainProp) => {
   return (
     <>
-      <main className="flex w-11/12 items-center justify-center rounded-lg bg-neutral-800 p-1">
+      <main className="flex items-center justify-center rounded-lg bg-neutral-800 p-1 lg:col-span-4 lg:col-start-1 lg:row-span-3 lg:row-start-1">
         {loading && (
           <div className="flex flex-col items-center justify-center gap-1">
             <span className="font-DM-Sans text-neutral-0">
@@ -353,7 +366,7 @@ type ListProp = {
 export const List = ({ loading }: ListProp) => {
   return (
     <>
-      <ul className="grid w-11/12 grid-cols-2 grid-rows-2 gap-4">
+      <ul className="grid grid-cols-2 grid-rows-2 gap-4 lg:col-span-4 lg:col-start-1 lg:row-start-4 lg:grid-cols-4 lg:grid-rows-1">
         <ListItem loading={loading} text="Feels like" />
         <ListItem loading={loading} text="Humidity" />
         <ListItem loading={loading} text="Wind" />
@@ -383,9 +396,9 @@ const ListItem = ({ text, unit, loading }: ListItemProps) => {
 export const DailyList = () => {
   return (
     <>
-      <section className="flex w-11/12 flex-col gap-2">
+      <section className="flex flex-col gap-2 lg:col-span-4 lg:row-span-2 lg:row-start-5 lg:gap-4">
         <span className="text-neutral-0 font-DM-Sans">Daily forecast</span>
-        <ul className="grid grid-cols-2 grid-rows-3 gap-4">
+        <ul className="grid grid-cols-2 grid-rows-3 gap-4 lg:h-full lg:grid-cols-7 lg:grid-rows-1">
           <DailyListItem />
           <DailyListItem />
           <DailyListItem />
@@ -410,7 +423,7 @@ type DailyListItemProps = {
 const DailyListItem = ({ day, src, alt, high, low }: DailyListItemProps) => {
   return (
     <>
-      <li className="rounded-lg border border-neutral-600 bg-neutral-800 p-16">
+      <li className="rounded-lg border border-neutral-600 bg-neutral-800 p-16 lg:p-0">
         <span>{day}</span>
         <img src={src} alt={alt} />
         <div>
@@ -431,7 +444,7 @@ export const HourlyList = ({ loading }: HourlyListProp) => {
   const [state, setState] = useState("Tuesday");
   return (
     <>
-      <section className="relative flex w-11/12 flex-col gap-4 rounded-lg bg-neutral-800 p-4">
+      <section className="relative flex flex-col gap-4 rounded-lg bg-neutral-800 p-4 lg:col-span-2 lg:col-start-5 lg:row-span-6 lg:row-start-1">
         <div className="flex justify-between">
           <span className="text-neutral-0 font-DM-Sans">Hourly forecast</span>
           <HourlyDropDown

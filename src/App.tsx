@@ -5,8 +5,7 @@ import {
   Container,
   Header,
   Title,
-  Search,
-  Button,
+  Form,
   Main,
   List,
   DailyList,
@@ -67,14 +66,15 @@ function App() {
         ) : (
           <>
             <Title />
-            <Search searching={searching} />
-            <Button />
+            <Form searching={searching} />
             {results ? (
               <>
-                <Main loading={loading} />
-                <List loading={loading} />
-                <DailyList />
-                <HourlyList loading={loading} />
+                <div className="flex w-11/12 flex-col gap-4 lg:grid lg:w-full lg:grid-cols-6 lg:grid-rows-6 lg:gap-x-6 lg:gap-y-8">
+                  <Main loading={loading} />
+                  <List loading={loading} />
+                  <DailyList />
+                  <HourlyList loading={loading} />
+                </div>
               </>
             ) : (
               <NoResults />
