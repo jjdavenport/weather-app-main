@@ -136,10 +136,10 @@ const HeaderMenu = ({ onClose }: HeaderMenu) => {
 
   return (
     <>
-      <div className="absolute top-12 z-50 flex w-full flex-col gap-2 rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg">
+      <div className="absolute top-12 right-0 z-40 flex w-full flex-col rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg lg:w-3/12">
         <button
           onClick={handleClick}
-          className="text-neutral-0 focus:outline-neutral-0 cursor-pointer rounded-lg p-1 text-left hover:bg-neutral-700 focus:outline focus:outline-offset-1"
+          className="text-neutral-0 focus:outline-neutral-0 cursor-pointer rounded-lg px-2 py-1 text-left hover:bg-neutral-700 focus:outline focus:outline-offset-1"
         >
           Switch to {selected.unit}
         </button>
@@ -186,7 +186,7 @@ type FormProp = {
 
 export const Form = ({ searching }: FormProp) => {
   return (
-    <form className="flex w-full flex-col items-center gap-2 lg:w-7/12 lg:flex-row lg:gap-4">
+    <form className="flex w-full flex-col items-center gap-4 lg:w-7/12 lg:flex-row">
       <Search searching={searching} />
       <SearchButton />
     </form>
@@ -230,7 +230,7 @@ const SearchList = () => {
   const list = ["City Name", "City Name", "City Name", "City Name"];
   return (
     <>
-      <ul className="absolute top-14 left-0 flex w-full flex-col gap-1 rounded-lg bg-neutral-800 p-2 shadow-lg">
+      <ul className="absolute top-28 left-0 flex w-full flex-col gap-1 rounded-lg bg-neutral-800 p-2 shadow-lg lg:top-14">
         {list.map((i, index) => (
           <SearchListItem text={i} key={index} />
         ))}
@@ -247,7 +247,7 @@ const SearchListItem = ({ text }: SearchListitemProp) => {
   return (
     <>
       <li>
-        <button className="text-neutral-0 focus:outline-neutral-0 w-full cursor-pointer rounded-lg p-1 outline-neutral-600 hover:bg-neutral-700 hover:outline focus:outline focus:outline-offset-1">
+        <button className="text-neutral-0 focus:outline-neutral-0 w-full cursor-pointer rounded-lg p-1 outline-neutral-600 hover:bg-neutral-700 hover:outline focus:outline focus:outline-offset-1 lg:px-2 lg:text-left">
           {text}
         </button>
       </li>
@@ -283,8 +283,8 @@ const HeaderListItem = ({
 }: HeaderListItemsProp) => {
   return (
     <>
-      <li className="flex flex-col">
-        <label className="p-1 text-neutral-200">{label}</label>
+      <li className="flex flex-col gap-1 py-1">
+        <label className="px-2 py-1 text-neutral-200">{label}</label>
         <HeaderListButton
           onClick={setButton}
           selected={selected}
@@ -314,7 +314,7 @@ const HeaderListButton = ({
   return (
     <button
       onClick={() => onClick(text)}
-      className={`${selected === text ? "bg-neutral-700" : "bg-transparent"} text-neutral-0 flex cursor-pointer justify-between rounded-lg p-1 text-left`}
+      className={`${selected === text ? "bg-neutral-700" : "hover:bg-neutral-700"} text-neutral-0 focus:outline-neutral-0 flex cursor-pointer justify-between rounded-lg px-2 py-1 text-left transition-colors focus:outline focus:outline-offset-1`}
     >
       {selected === text ? (
         <>
@@ -345,7 +345,7 @@ type MainProp = {
 export const Main = ({ loading }: MainProp) => {
   return (
     <>
-      <main className="flex items-center justify-center rounded-lg bg-neutral-800 p-1 lg:col-span-4 lg:col-start-1 lg:row-span-3 lg:row-start-1">
+      <main className="flex items-center justify-center rounded-xl bg-neutral-800 p-1 lg:col-span-4 lg:col-start-1 lg:row-span-3 lg:row-start-1">
         {loading && (
           <div className="flex flex-col items-center justify-center gap-1">
             <span className="font-DM-Sans text-neutral-0">
@@ -423,7 +423,7 @@ type DailyListItemProps = {
 const DailyListItem = ({ day, src, alt, high, low }: DailyListItemProps) => {
   return (
     <>
-      <li className="rounded-lg border border-neutral-600 bg-neutral-800 p-16 lg:p-0">
+      <li className="rounded-xl border border-neutral-600 bg-neutral-800 p-16 lg:p-0">
         <span>{day}</span>
         <img src={src} alt={alt} />
         <div>
@@ -444,8 +444,8 @@ export const HourlyList = ({ loading }: HourlyListProp) => {
   const [state, setState] = useState("Tuesday");
   return (
     <>
-      <section className="relative flex flex-col gap-4 rounded-lg bg-neutral-800 p-4 lg:col-span-2 lg:col-start-5 lg:row-span-6 lg:row-start-1">
-        <div className="flex justify-between">
+      <section className="flex flex-col gap-4 rounded-xl bg-neutral-800 p-4 lg:col-span-2 lg:col-start-5 lg:row-span-6 lg:row-start-1">
+        <div className="relative flex justify-between">
           <span className="text-neutral-0 font-DM-Sans">Hourly forecast</span>
           <HourlyDropDown
             text={state}
@@ -453,6 +453,13 @@ export const HourlyList = ({ loading }: HourlyListProp) => {
             open={menu}
             onClick={() => setMenu(!menu)}
           />
+          {menu && (
+            <HourlyDropDownList
+              state={state}
+              setMenu={setMenu}
+              setState={setState}
+            />
+          )}
         </div>
         <ul className="flex flex-col gap-4">
           <HourlyListItem />
@@ -464,13 +471,6 @@ export const HourlyList = ({ loading }: HourlyListProp) => {
           <HourlyListItem />
           <HourlyListItem />
         </ul>
-        {menu && (
-          <HourlyDropDownList
-            state={state}
-            setMenu={setMenu}
-            setState={setState}
-          />
-        )}
       </section>
     </>
   );
@@ -557,7 +557,7 @@ const HourlyDropDownList = ({
 
   return (
     <>
-      <ul className="font-DM-Sans text-neutral-0 absolute top-16 left-0 flex w-full flex-col gap-2 rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg">
+      <ul className="font-DM-Sans text-neutral-0 absolute top-12 left-0 z-50 flex w-full flex-col gap-2 rounded-xl border border-neutral-600 bg-neutral-800 p-2 shadow-lg lg:right-0 lg:left-auto lg:w-8/12">
         {days.map((i, index) => (
           <HourlyDropDownButton
             state={state}
@@ -586,7 +586,7 @@ const HourlyDropDownButton = ({
     <>
       <li>
         <button
-          className={`${state === text ? "bg-neutral-700" : "bg-transparent"} focus:outline-neutral-0 w-full cursor-pointer rounded-lg p-1 transition-colors hover:bg-neutral-700 focus:outline focus:outline-offset-1`}
+          className={`${state === text ? "bg-neutral-700" : "bg-transparent"} focus:outline-neutral-0 w-full cursor-pointer rounded-lg p-1 transition-colors hover:bg-neutral-700 focus:outline focus:outline-offset-1 lg:px-2 lg:text-left`}
           onClick={() => onClick(text)}
         >
           {text}
