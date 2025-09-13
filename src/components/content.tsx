@@ -45,7 +45,7 @@ export const Footer = () => {
           Frontend Mentor
         </a>
         . Coded by{" "}
-        <a className="underline" href="https://github.io/jjdavenport">
+        <a className="underline" href="https://github.com/jjdavenport">
           jjdavenport
         </a>
         .
@@ -54,14 +54,39 @@ export const Footer = () => {
   );
 };
 
-export const Header = () => {
+type HeaderProps = {
+  setTemperature: React.Dispatch<SetStateAction<string>>;
+  setWindSpeedUnit: React.Dispatch<SetStateAction<string>>;
+  setPrecipitation: React.Dispatch<SetStateAction<string>>;
+};
+
+export const Header = ({
+  setTemperature,
+  setWindSpeedUnit,
+  setPrecipitation,
+}: HeaderProps) => {
   const [menu, setMenu] = useState(false);
+  const [selected, setSelected] = useState({
+    unit: "Metric",
+    temperature: "Celsius (°C)",
+    wind: "km/h",
+    precipitation: "Millimeters (mm)",
+  });
   return (
     <>
       <header className="relative flex w-11/12 justify-between lg:w-full">
         <img className="object-contain" src={logo} alt="logo" />
         <HeaderDropdown open={menu} onClick={() => setMenu(!menu)} />
-        {menu && <HeaderMenu onClose={() => setMenu(false)} />}
+        {menu && (
+          <HeaderMenu
+            selected={selected}
+            setSelected={setSelected}
+            setPrecipitation={setPrecipitation}
+            setWindSpeedUnit={setWindSpeedUnit}
+            setTemperature={setTemperature}
+            onClose={() => setMenu(false)}
+          />
+        )}
       </header>
     </>
   );
@@ -91,84 +116,106 @@ const HeaderDropdown = ({ onClick, open }: HeaderDropdownProp) => {
   );
 };
 
-export const Title = () => {
-  return (
-    <>
-      <h1 className="font-DM-Sans text-neutral-0 w-11/12 text-center text-6xl font-bold lg:w-full">
-        How's the sky looking today?
-      </h1>
-    </>
-  );
-};
-
-type HeaderMenu = {
+type HeaderMenuProps = {
   onClose: () => void;
+  setTemperature: React.Dispatch<SetStateAction<string>>;
+  setWindSpeedUnit: React.Dispatch<SetStateAction<string>>;
+  setPrecipitation: React.Dispatch<SetStateAction<string>>;
+  selected: {
+    unit: string;
+    precipitation: string;
+    wind: string;
+    temperature: string;
+  };
+  setSelected: React.Dispatch<SetStateAction<object>>;
 };
 
-const HeaderMenu = ({ onClose }: HeaderMenu) => {
-  const [selected, setSelected] = useState({
-    unit: "Imperial",
-    temperature: "Celsius (°C)",
-    wind: "km/h",
-    precipitation: "Millimeters (mm)",
-  });
-
-  const handleClick = () => {
+const HeaderMenu = ({
+  onClose,
+  setTemperature,
+  setWindSpeedUnit,
+  setPrecipitation,
+  selected,
+  setSelected,
+}: HeaderMenuProps) => {
+  const handleUnitClick = () => {
     if (selected.unit === "Imperial") {
-      setSelected((prev) => ({
-        ...prev,
+      setSelected({
         unit: "Metric",
+        temperature: "Celsius (°C)",
+        wind: "km/h",
+        precipitation: "Millimeters (mm)",
+      });
+      setTemperature("celsius");
+      setWindSpeedUnit("kmh");
+      setPrecipitation("mm");
+    } else {
+      setSelected({
+        unit: "Imperial",
         temperature: "Fahrenheit (°F)",
         wind: "mph",
         precipitation: "Inches (in)",
-      }));
-    } else {
-      setSelected((prev) => ({
-        ...prev,
-        unit: "Imperial",
-        precipitation: "Millimeters (mm)",
-        wind: "km/h",
-        temperature: "Celsius (°C)",
-      }));
+      });
+      setTemperature("fahrenheit");
+      setWindSpeedUnit("mph");
+      setPrecipitation("in");
     }
     onClose();
+  };
+
+  const handleTemperatureClick = (value: string) => {
+    setSelected((prev) => ({ ...prev, temperature: value }));
+    if (value === "Celsius (°C)") {
+      setTemperature("celsius");
+    } else {
+      setTemperature("fahrenheit");
+    }
+  };
+
+  const handleWindSpeedClick = (value: string) => {
+    setSelected((prev) => ({ ...prev, wind: value }));
+    if (value === "mph") {
+      setWindSpeedUnit("mph");
+    } else {
+      setWindSpeedUnit("kmh");
+    }
+  };
+
+  const handlePrecipitationClick = (value: string) => {
+    setSelected((prev) => ({ ...prev, precipitation: value }));
+    if (value === "Millimeters (mm)") {
+      setPrecipitation("mm");
+    } else {
+      setPrecipitation("in");
+    }
   };
 
   return (
     <>
       <div className="absolute top-12 right-0 z-40 flex w-full flex-col rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg lg:w-3/12">
         <button
-          onClick={handleClick}
+          onClick={handleUnitClick}
           className="text-neutral-0 focus:outline-neutral-0 cursor-pointer rounded-lg px-2 py-1 text-left hover:bg-neutral-700 focus:outline focus:outline-offset-1"
         >
-          Switch to {selected.unit}
+          Switch to {selected.unit === "Imperial" ? "Metric" : "Imperial"}
         </button>
         <div className="flex flex-col divide-y divide-neutral-600">
           <HeaderListItem
-            setButton={(value) =>
-              setSelected((prev) => ({ ...prev, temperature: value }))
-            }
+            setButton={(value) => handleTemperatureClick(value)}
             selected={selected.temperature}
             label="Temperature"
             buttonOne="Celsius (°C)"
             buttonTwo="Fahrenheit (°F)"
           />
           <HeaderListItem
-            setButton={(value) =>
-              setSelected((prev) => ({ ...prev, wind: value }))
-            }
+            setButton={(value) => handleWindSpeedClick(value)}
             selected={selected.wind}
             label="Wind Speed"
             buttonOne="km/h"
             buttonTwo="mph"
           />
           <HeaderListItem
-            setButton={(value) =>
-              setSelected((prev) => ({
-                ...prev,
-                precipitation: value,
-              }))
-            }
+            setButton={(value) => handlePrecipitationClick(value)}
             selected={selected.precipitation}
             label="Precipitation"
             buttonOne="Millimeters (mm)"
@@ -176,6 +223,78 @@ const HeaderMenu = ({ onClose }: HeaderMenu) => {
           />
         </div>
       </div>
+    </>
+  );
+};
+
+type HeaderListItemsProp = {
+  label: string;
+  buttonOne: string;
+  buttonTwo: string;
+  selected: string;
+  setButton: React.Dispatch<SetStateAction<boolean>>;
+};
+
+const HeaderListItem = ({
+  label,
+  buttonOne,
+  buttonTwo,
+  selected,
+  setButton,
+}: HeaderListItemsProp) => {
+  return (
+    <>
+      <li className="flex flex-col gap-1 py-1">
+        <label className="px-2 py-1 text-neutral-200">{label}</label>
+        <HeaderListButton
+          onClick={setButton}
+          selected={selected}
+          text={buttonOne}
+        />
+        <HeaderListButton
+          onClick={setButton}
+          selected={selected}
+          text={buttonTwo}
+        />
+      </li>
+    </>
+  );
+};
+
+type HeaderListButtonProp = {
+  text: string;
+  selected: string;
+  onClick: () => void;
+};
+
+const HeaderListButton = ({
+  text,
+  selected,
+  onClick,
+}: HeaderListButtonProp) => {
+  return (
+    <button
+      onClick={() => onClick(text)}
+      className={`${selected === text ? "bg-neutral-700" : "hover:bg-neutral-700"} text-neutral-0 focus:outline-neutral-0 flex cursor-pointer justify-between rounded-lg px-2 py-1 text-left transition-colors focus:outline focus:outline-offset-1`}
+    >
+      {selected === text ? (
+        <>
+          {text}
+          <img src={tick} alt="tick" />
+        </>
+      ) : (
+        <>{text}</>
+      )}
+    </button>
+  );
+};
+
+export const Title = () => {
+  return (
+    <>
+      <h1 className="font-DM-Sans text-neutral-0 w-9/12 text-center text-5xl font-bold lg:w-full lg:text-6xl">
+        How's the sky looking today?
+      </h1>
     </>
   );
 };
@@ -266,68 +385,6 @@ const SearchInProgress = () => {
   );
 };
 
-type HeaderListItemsProp = {
-  label: string;
-  buttonOne: string;
-  buttonTwo: string;
-  selected: string;
-  setButton: React.Dispatch<SetStateAction<boolean>>;
-};
-
-const HeaderListItem = ({
-  label,
-  buttonOne,
-  buttonTwo,
-  selected,
-  setButton,
-}: HeaderListItemsProp) => {
-  return (
-    <>
-      <li className="flex flex-col gap-1 py-1">
-        <label className="px-2 py-1 text-neutral-200">{label}</label>
-        <HeaderListButton
-          onClick={setButton}
-          selected={selected}
-          text={buttonOne}
-        />
-        <HeaderListButton
-          onClick={setButton}
-          selected={selected}
-          text={buttonTwo}
-        />
-      </li>
-    </>
-  );
-};
-
-type HeaderListButtonProp = {
-  text: string;
-  selected: string;
-  onClick: () => void;
-};
-
-const HeaderListButton = ({
-  text,
-  selected,
-  onClick,
-}: HeaderListButtonProp) => {
-  return (
-    <button
-      onClick={() => onClick(text)}
-      className={`${selected === text ? "bg-neutral-700" : "hover:bg-neutral-700"} text-neutral-0 focus:outline-neutral-0 flex cursor-pointer justify-between rounded-lg px-2 py-1 text-left transition-colors focus:outline focus:outline-offset-1`}
-    >
-      {selected === text ? (
-        <>
-          {text}
-          <img src={tick} alt="tick" />
-        </>
-      ) : (
-        <>{text}</>
-      )}
-    </button>
-  );
-};
-
 const SearchButton = () => {
   return (
     <>
@@ -338,20 +395,69 @@ const SearchButton = () => {
   );
 };
 
-type MainProp = {
+type MainProps = {
   loading: boolean;
+  city: string;
+  country: string;
+  src: string;
+  alt: string;
+  temperature: string;
 };
 
-export const Main = ({ loading }: MainProp) => {
+export const Main = ({
+  loading,
+  city,
+  country,
+  src,
+  alt,
+  temperature,
+}: MainProps) => {
+  const months = [
+    "Jan",
+    "Feb",
+    "March",
+    "April",
+    "May",
+    "Jun",
+    "July",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  const days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
   return (
     <>
-      <main className="flex items-center justify-center rounded-xl bg-neutral-800 p-1 lg:col-span-4 lg:col-start-1 lg:row-span-3 lg:row-start-1">
-        {loading && (
+      <main className="bg-main-mobile lg:bg-main-desktop flex h-68 items-center justify-center rounded-3xl bg-neutral-800 bg-cover bg-right bg-no-repeat p-1 lg:col-span-4 lg:col-start-1 lg:row-span-3 lg:row-start-1">
+        {loading ? (
           <div className="flex flex-col items-center justify-center gap-1">
             <span className="font-DM-Sans text-neutral-0">
               .<span className="">.</span>.
             </span>
             <span className="font-DM-Sans text-neutral-0">Loading…</span>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center">
+            <h1 className="font-DM-Sans text-neutral-0">
+              {city}, {` `}
+              {country}
+            </h1>
+            <span className="font-DM-Sans text-neutral-200">
+              {`${days[new Date().getDay()]}, ${months[new Date().getMonth()]}, ${new Date().getDay()}, ${new Date().getFullYear()}`}
+            </span>
+            <img src={src} alt={alt} />
+            <span className="font-DM-Sans text-neutral-0 text-6xl">
+              {temperature}°
+            </span>
           </div>
         )}
       </main>
@@ -367,10 +473,10 @@ export const List = ({ loading }: ListProp) => {
   return (
     <>
       <ul className="grid grid-cols-2 grid-rows-2 gap-4 lg:col-span-4 lg:col-start-1 lg:row-start-4 lg:grid-cols-4 lg:grid-rows-1">
-        <ListItem loading={loading} text="Feels like" />
-        <ListItem loading={loading} text="Humidity" />
-        <ListItem loading={loading} text="Wind" />
-        <ListItem loading={loading} text="Precipitation" />
+        <ListItem loading={loading} text="Feels like" unit="°" />
+        <ListItem loading={loading} text="Humidity" unit="%" />
+        <ListItem loading={loading} text="Wind" unit="mph" />
+        <ListItem loading={loading} text="Precipitation" unit="in" />
       </ul>
     </>
   );
@@ -387,7 +493,7 @@ const ListItem = ({ text, unit, loading }: ListItemProps) => {
     <>
       <li className="font-DM-Sans text-neutral-0 flex flex-col gap-1 rounded-lg border border-neutral-600 bg-neutral-800 p-4">
         <span>{text}</span>
-        <span>{loading ? unit : "_"}</span>
+        <span>{loading ? "_" : unit}</span>
       </li>
     </>
   );
