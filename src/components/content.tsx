@@ -465,18 +465,28 @@ export const Main = ({
   );
 };
 
-type ListProp = {
+type ListProps = {
   loading: boolean;
+  precipitationUnit: string;
+  windSpeedUnit: string;
 };
 
-export const List = ({ loading }: ListProp) => {
+export const List = ({
+  loading,
+  precipitationUnit,
+  windSpeedUnit,
+}: ListProps) => {
   return (
     <>
       <ul className="grid grid-cols-2 grid-rows-2 gap-4 lg:col-span-4 lg:col-start-1 lg:row-start-4 lg:grid-cols-4 lg:grid-rows-1">
         <ListItem loading={loading} text="Feels like" unit="°" />
         <ListItem loading={loading} text="Humidity" unit="%" />
-        <ListItem loading={loading} text="Wind" unit="mph" />
-        <ListItem loading={loading} text="Precipitation" unit="in" />
+        <ListItem loading={loading} text="Wind" unit={windSpeedUnit} />
+        <ListItem
+          loading={loading}
+          text="Precipitation"
+          unit={precipitationUnit}
+        />
       </ul>
     </>
   );
@@ -708,10 +718,10 @@ export const Error = () => {
     <>
       <section className="flex flex-1 flex-col items-center justify-center gap-4">
         <img className="w-12 object-contain" src={cross} alt="error" />
-        <span className="text-neutral-0 font-Bricolage-Grotesque text-5xl font-medium">
+        <span className="text-neutral-0 font-Bricolage-Grotesque text-center text-3xl font-medium lg:text-5xl">
           Something went wrong
         </span>
-        <p className="font-DM-Sans w-96 text-center leading-5 text-neutral-200">
+        <p className="font-DM-Sans w-60 text-center leading-5 text-neutral-200 lg:w-96">
           We couldn't connect server (API error).Please try again in a few
           moments.
         </p>
