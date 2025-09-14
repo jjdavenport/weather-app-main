@@ -35,6 +35,12 @@ function App() {
   const [precipitationUnit, setPrecipitationUnit] = useState("in");
   const [windSpeedUnit, setWindSpeedUnit] = useState("mph");
   const [day, setDay] = useState("Monday");
+  const [temperature, setTemperature] = useState(0);
+  const [humidity, setHumidity] = useState(0);
+  const [windSpeed, setWindSpeed] = useState(0);
+  const [precipitation, setPrecipitation] = useState(0);
+  const [feelsLike, setFeelsLike] = useState(0);
+  const [src, setSrc] = useState(sunny);
 
   const fetchLatLong = async () => {
     const response = await fetch("https://ipapi.co/json/");
@@ -101,8 +107,18 @@ function App() {
             {results ? (
               <>
                 <div className="flex w-11/12 flex-col gap-4 lg:grid lg:w-full lg:grid-cols-6 lg:grid-rows-6 lg:gap-x-6 lg:gap-y-8">
-                  <Main country={country} city={city} loading={loading} />
+                  <Main
+                    src={src}
+                    temperature={temperature}
+                    country={country}
+                    city={city}
+                    loading={loading}
+                  />
                   <List
+                    feelsLike={feelsLike}
+                    precipitation={precipitation}
+                    windSpeed={windSpeed}
+                    humidity={humidity}
                     precipitationUnit={precipitationUnit}
                     windSpeedUnit={windSpeedUnit}
                     loading={loading}

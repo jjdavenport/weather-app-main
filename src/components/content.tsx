@@ -400,7 +400,6 @@ type MainProps = {
   city: string;
   country: string;
   src: string;
-  alt: string;
   temperature: string;
 };
 
@@ -409,7 +408,6 @@ export const Main = ({
   city,
   country,
   src,
-  alt,
   temperature,
 }: MainProps) => {
   const months = [
@@ -437,27 +435,39 @@ export const Main = ({
   ];
   return (
     <>
-      <main className="bg-main-mobile lg:bg-main-desktop flex h-68 items-center justify-center rounded-3xl bg-neutral-800 bg-cover bg-right bg-no-repeat p-1 lg:col-span-4 lg:col-start-1 lg:row-span-3 lg:row-start-1">
+      <main
+        className={`${loading ? "bg-neutral-800" : "bg-main-mobile lg:bg-main-desktop"} flex h-68 items-center justify-center rounded-3xl bg-cover bg-right bg-no-repeat lg:col-span-4 lg:col-start-1 lg:row-span-3 lg:row-start-1`}
+      >
         {loading ? (
-          <div className="flex flex-col items-center justify-center gap-1">
-            <span className="font-DM-Sans text-neutral-0">
-              .<span className="">.</span>.
+          <div className="flex flex-col items-center justify-center gap-3">
+            <div className="font-DM-Sans relative flex w-full items-end justify-center gap-2 tracking-widest text-neutral-200">
+              <Circle size={12} className="animate-pulse fill-neutral-200" />
+              <div className="pb-1">
+                <Circle size={12} className="animate-pulse fill-neutral-200" />
+              </div>
+              <Circle size={12} className="animate-pulse fill-neutral-200" />
+            </div>
+            <span className="font-DM-Sans animate-pulse text-neutral-200">
+              Loading…
             </span>
-            <span className="font-DM-Sans text-neutral-0">Loading…</span>
           </div>
         ) : (
-          <div className="flex flex-col items-center">
-            <h1 className="font-DM-Sans text-neutral-0">
-              {city}, {` `}
-              {country}
-            </h1>
-            <span className="font-DM-Sans text-neutral-200">
-              {`${days[new Date().getDay()]}, ${months[new Date().getMonth()]}, ${new Date().getDay()}, ${new Date().getFullYear()}`}
-            </span>
-            <img src={src} alt={alt} />
-            <span className="font-DM-Sans text-neutral-0 text-6xl">
-              {temperature}°
-            </span>
+          <div className="flex h-full flex-col items-center justify-center gap-2">
+            <div className="flex flex-col items-center">
+              <h1 className="font-DM-Sans text-neutral-0 text-center text-2xl font-medium">
+                {city}, {` `}
+                {country}
+              </h1>
+              <span className="font-DM-Sans text-neutral-200">
+                {`${days[new Date().getDay()]}, ${months[new Date().getMonth()]}, ${new Date().getDay()}, ${new Date().getFullYear()}`}
+              </span>
+            </div>
+            <div className="flex items-center gap-4">
+              <img className="w-20 object-contain" src={src} alt="weather" />
+              <span className="font-DM-Sans text-neutral-0 text-6xl font-bold italic">
+                {temperature}°
+              </span>
+            </div>
           </div>
         )}
       </main>
@@ -469,22 +479,41 @@ type ListProps = {
   loading: boolean;
   precipitationUnit: string;
   windSpeedUnit: string;
+  precipitation: number;
+  humidity: number;
+  windSpeed: number;
+  feelsLike: number;
 };
 
 export const List = ({
   loading,
   precipitationUnit,
   windSpeedUnit,
+  precipitation,
+  humidity,
+  windSpeed,
+  feelsLike,
 }: ListProps) => {
   return (
     <>
       <ul className="grid grid-cols-2 grid-rows-2 gap-4 lg:col-span-4 lg:col-start-1 lg:row-start-4 lg:grid-cols-4 lg:grid-rows-1">
-        <ListItem loading={loading} text="Feels like" unit="°" />
-        <ListItem loading={loading} text="Humidity" unit="%" />
-        <ListItem loading={loading} text="Wind" unit={windSpeedUnit} />
+        <ListItem
+          loading={loading}
+          text="Feels like"
+          value={feelsLike}
+          unit="°"
+        />
+        <ListItem loading={loading} text="Humidity" value={humidity} unit="%" />
+        <ListItem
+          loading={loading}
+          text="Wind"
+          value={windSpeed}
+          unit={windSpeedUnit}
+        />
         <ListItem
           loading={loading}
           text="Precipitation"
+          value={precipitation}
           unit={precipitationUnit}
         />
       </ul>
@@ -496,16 +525,19 @@ type ListItemProps = {
   text: string;
   unit: string;
   loading: boolean;
+  value: number;
 };
 
-const ListItem = ({ text, unit, loading }: ListItemProps) => {
+const ListItem = ({ text, unit, loading, value }: ListItemProps) => {
   return (
-    <>
-      <li className="font-DM-Sans text-neutral-0 flex flex-col gap-1 rounded-lg border border-neutral-600 bg-neutral-800 p-4">
-        <span>{text}</span>
-        <span>{loading ? "_" : unit}</span>
-      </li>
-    </>
+    <li className="font-DM-Sans text-neutral-0 flex flex-col gap-4 rounded-xl border border-neutral-600 bg-neutral-800 px-4 py-3">
+      <span className="text-neutral-200">{text}</span>
+      <span
+        className={`${loading ? "animate-pulse text-neutral-200" : "text-neutral-0"} text-3xl`}
+      >
+        {loading ? "_" : unit === "%" ? `${value} ${unit}` : `${value} ${unit}`}
+      </span>
+    </li>
   );
 };
 
@@ -579,14 +611,14 @@ export const HourlyList = ({ loading, day, setDay }: HourlyListProp) => {
           )}
         </div>
         <ul className="flex flex-col gap-4">
-          <HourlyListItem />
-          <HourlyListItem />
-          <HourlyListItem />
-          <HourlyListItem />
-          <HourlyListItem />
-          <HourlyListItem />
-          <HourlyListItem />
-          <HourlyListItem />
+          <HourlyListItem loading={loading} />
+          <HourlyListItem loading={loading} />
+          <HourlyListItem loading={loading} />
+          <HourlyListItem loading={loading} />
+          <HourlyListItem loading={loading} />
+          <HourlyListItem loading={loading} />
+          <HourlyListItem loading={loading} />
+          <HourlyListItem loading={loading} />
         </ul>
       </section>
     </>
@@ -598,12 +630,21 @@ type HourlyListItemProps = {
   alt: string;
   time: string;
   temp: string;
+  loading: boolean;
 };
 
-const HourlyListItem = ({ src, alt, time, temp }: HourlyListItemProps) => {
+const HourlyListItem = ({
+  src,
+  alt,
+  time,
+  temp,
+  loading,
+}: HourlyListItemProps) => {
   return (
     <>
-      <li className="h-10 w-full rounded-lg border border-neutral-600 bg-neutral-700">
+      <li
+        className={`${loading && "animate-pulse"} h-10 w-full rounded-lg border border-neutral-600 bg-neutral-700`}
+      >
         <div>
           <img src={src} alt={alt} />
           <span>{time}</span>
@@ -741,3 +782,19 @@ export const NoResults = () => {
     </>
   );
 };
+
+type CircleProps = {
+  size: number;
+  className: string;
+};
+
+const Circle = ({ size, className }: CircleProps) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox={`0 0 ${size} ${size}`}
+    className={className}
+  >
+    <circle cx={size / 2} cy={size / 2} r={size / 2} className={className} />
+  </svg>
+);
