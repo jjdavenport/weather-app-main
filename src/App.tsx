@@ -34,6 +34,7 @@ function App() {
   const [temperature, setTemperature] = useState("celsius");
   const [precipitation, setPrecipitation] = useState("in");
   const [windSpeedUnit, setWindSpeedUnit] = useState("mph");
+  const [day, setDay] = useState("Monday");
 
   const fetchLatLong = async () => {
     const response = await fetch("https://ipapi.co/json/");
@@ -103,7 +104,7 @@ function App() {
                   <Main country={country} city={city} loading={loading} />
                   <List loading={loading} />
                   <DailyList />
-                  <HourlyList loading={loading} />
+                  <HourlyList day={day} setDay={setDay} loading={loading} />
                 </div>
               </>
             ) : (

@@ -543,27 +543,28 @@ const DailyListItem = ({ day, src, alt, high, low }: DailyListItemProps) => {
 
 type HourlyListProp = {
   loading: boolean;
+  day: string;
+  setDay: React.Dispatch<SetStateAction<string>>;
 };
 
-export const HourlyList = ({ loading }: HourlyListProp) => {
+export const HourlyList = ({ loading, day, setDay }: HourlyListProp) => {
   const [menu, setMenu] = useState(false);
-  const [state, setState] = useState("Tuesday");
   return (
     <>
       <section className="flex flex-col gap-4 rounded-xl bg-neutral-800 p-4 lg:col-span-2 lg:col-start-5 lg:row-span-6 lg:row-start-1">
         <div className="relative flex justify-between">
           <span className="text-neutral-0 font-DM-Sans">Hourly forecast</span>
           <HourlyDropDown
-            text={state}
+            text={day}
             loading={loading}
             open={menu}
             onClick={() => setMenu(!menu)}
           />
           {menu && (
             <HourlyDropDownList
-              state={state}
+              state={day}
               setMenu={setMenu}
-              setState={setState}
+              setState={setDay}
             />
           )}
         </div>
