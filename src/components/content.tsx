@@ -401,6 +401,7 @@ type MainProps = {
   country: string;
   src: string;
   temperature: string;
+  alt: string;
 };
 
 export const Main = ({
@@ -409,6 +410,7 @@ export const Main = ({
   country,
   src,
   temperature,
+  alt,
 }: MainProps) => {
   const months = [
     "Jan",
@@ -466,7 +468,7 @@ export const Main = ({
               <img
                 className="w-24 object-contain lg:w-28"
                 src={src}
-                alt="weather"
+                alt={alt}
               />
               <span className="font-DM-Sans text-neutral-0 text-7xl font-bold italic">
                 {temperature}°
@@ -545,19 +547,19 @@ const ListItem = ({ text, unit, loading, value }: ListItemProps) => {
   );
 };
 
-export const DailyList = () => {
+type DailyListProp = {
+  data: [];
+};
+
+export const DailyList = ({ data }: DailyListProp) => {
   return (
     <>
       <section className="flex flex-col gap-2 lg:col-span-4 lg:row-span-2 lg:row-start-5 lg:gap-4">
         <span className="text-neutral-0 font-DM-Sans">Daily forecast</span>
         <ul className="grid grid-cols-2 grid-rows-3 gap-4 lg:h-full lg:grid-cols-7 lg:grid-rows-1">
-          <DailyListItem />
-          <DailyListItem />
-          <DailyListItem />
-          <DailyListItem />
-          <DailyListItem />
-          <DailyListItem />
-          <DailyListItem />
+          {data.map((i, index) => (
+            <DailyListItem high={} low={} src={} />
+          ))}
         </ul>
       </section>
     </>

@@ -41,6 +41,7 @@ function App() {
   const [precipitation, setPrecipitation] = useState(0);
   const [feelsLike, setFeelsLike] = useState(0);
   const [src, setSrc] = useState(sunny);
+  const [alt, setAlt] = useState("weather");
 
   const fetchLatLong = async () => {
     const response = await fetch("https://ipapi.co/json/");
@@ -82,6 +83,30 @@ function App() {
         86: snow,
       };
 
+      const iconsAlt = {
+        0: "sunny",
+        1: "partly cloudy",
+        2: "partly cloudy",
+        3: "overcast",
+        45: "fog",
+        48: "fog",
+        51: "drizzle",
+        53: "drizzle",
+        55: "drizzle",
+        61: "rain",
+        63: "rain",
+        65: "rain",
+        71: "snow",
+        73: "snow",
+        75: "snow",
+        77: "snow",
+        80: "rain",
+        81: "rain",
+        82: "rain",
+        85: "snow",
+        86: "snow",
+      };
+
       const {
         hourly: {
           time,
@@ -99,38 +124,34 @@ function App() {
           time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
         ];
 
-      const windSpeed =
-        wind_speed_10m[
-          time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
-        ];
-
-      const rainfall =
-        precipitation[
-          time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
-        ];
-
-      const humidity =
-        relative_humidity_2m[
-          time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
-        ];
-
-      const apparent =
-        apparent_temperature[
-          time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
-        ];
-
-      const temperature =
-        temperature_2m[
-          time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
-        ];
-
       setWeather(result);
       setSrc(weatherIcons[index]);
-      setWindSpeed(windSpeed);
-      setPrecipitation(rainfall);
-      setTemperature(temperature);
-      setFeelsLike(apparent);
-      setHumidity(humidity);
+      setAlt(iconsAlt[index]);
+      setWindSpeed(
+        wind_speed_10m[
+          time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
+        ],
+      );
+      setPrecipitation(
+        precipitation[
+          time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
+        ],
+      );
+      setTemperature(
+        temperature_2m[
+          time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
+        ],
+      );
+      setFeelsLike(
+        apparent_temperature[
+          time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
+        ],
+      );
+      setHumidity(
+        relative_humidity_2m[
+          time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
+        ],
+      );
       setLoading(false);
       setError(false);
     } catch {
@@ -181,6 +202,7 @@ function App() {
               <>
                 <div className="flex w-11/12 flex-col gap-4 lg:grid lg:w-full lg:grid-cols-6 lg:grid-rows-6 lg:gap-x-6 lg:gap-y-8">
                   <Main
+                    alt={alt}
                     src={src}
                     temperature={temperature}
                     country={country}
