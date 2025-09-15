@@ -57,7 +57,48 @@ function App() {
         `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m,weather_code,precipitation,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_gusts_10m,wind_direction_10m&temperature_unit=${temperatureUnit}&windspeed_unit=${windSpeedUnit}`,
       );
       const result = await response.json();
+
+      const {
+        hourly: {
+          time,
+          temperature_2m,
+          apparent_temperature,
+          relative_humidity_2m,
+          precipitation,
+          wind_speed_10m,
+        },
+      } = result;
+
+      const windSpeed =
+        wind_speed_10m[
+          time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
+        ];
+
+      const rainfall =
+        precipitation[
+          time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
+        ];
+
+      const humidity =
+        relative_humidity_2m[
+          time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
+        ];
+
+      const apparent =
+        apparent_temperature[
+          time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
+        ];
+      const temperature =
+        temperature_2m[
+          time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
+        ];
+
       setWeather(result);
+      setWindSpeed(windSpeed);
+      setPrecipitation(rainfall);
+      setTemperature(temperature);
+      setFeelsLike(apparent);
+      setHumidity(humidity);
       setLoading(false);
       setError(false);
     } catch {
@@ -99,7 +140,7 @@ function App() {
           setTemperature={setTemperatureUnit}
         />
         {error ? (
-          <Error />
+          <Error onClick={fetchWeather} />
         ) : (
           <>
             <Title />

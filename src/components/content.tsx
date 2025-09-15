@@ -452,23 +452,23 @@ export const Main = ({
             </span>
           </div>
         ) : (
-          <div className="flex h-full w-full flex-col items-center justify-center gap-2 lg:flex-row lg:justify-between lg:p-8">
+          <div className="flex h-full w-full flex-col items-center justify-center gap-4 lg:flex-row lg:justify-between lg:gap-2 lg:p-8">
             <div className="flex flex-col items-center lg:items-start">
               <h1 className="font-DM-Sans text-neutral-0 text-center text-2xl font-semibold">
                 {city}, {` `}
                 {country}
               </h1>
               <span className="font-DM-Sans text-neutral-200">
-                {`${days[new Date().getDay()]}, ${months[new Date().getMonth()]}, ${new Date().getDay()}, ${new Date().getFullYear()}`}
+                {`${days[new Date().getDay()]}, ${months[new Date().getMonth()]}, ${new Date().getDate()}, ${new Date().getFullYear()}`}
               </span>
             </div>
-            <div className="flex items-center gap-4 lg:gap-6">
+            <div className="flex items-center gap-2 lg:gap-6">
               <img
-                className="w-20 object-contain lg:w-28"
+                className="w-24 object-contain lg:w-28"
                 src={src}
                 alt="weather"
               />
-              <span className="font-DM-Sans text-neutral-0 text-6xl font-bold italic lg:text-7xl">
+              <span className="font-DM-Sans text-neutral-0 text-7xl font-bold italic">
                 {temperature}°
               </span>
             </div>
