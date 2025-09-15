@@ -436,7 +436,7 @@ export const Main = ({
   return (
     <>
       <main
-        className={`${loading ? "bg-neutral-800" : "bg-main-mobile lg:bg-main-desktop"} flex h-68 items-center justify-center rounded-3xl bg-cover bg-right bg-no-repeat lg:col-span-4 lg:col-start-1 lg:row-span-3 lg:row-start-1`}
+        className={`${loading ? "bg-neutral-800" : "bg-main-mobile lg:bg-main-desktop"} flex h-68 items-center justify-center rounded-3xl bg-cover bg-right bg-no-repeat lg:col-span-4 lg:col-start-1 lg:row-span-3 lg:row-start-1 lg:h-auto`}
       >
         {loading ? (
           <div className="flex flex-col items-center justify-center gap-3">
@@ -452,9 +452,9 @@ export const Main = ({
             </span>
           </div>
         ) : (
-          <div className="flex h-full flex-col items-center justify-center gap-2">
-            <div className="flex flex-col items-center">
-              <h1 className="font-DM-Sans text-neutral-0 text-center text-2xl font-medium">
+          <div className="flex h-full w-full flex-col items-center justify-center gap-2 lg:flex-row lg:justify-between lg:p-8">
+            <div className="flex flex-col items-center lg:items-start">
+              <h1 className="font-DM-Sans text-neutral-0 text-center text-2xl font-semibold">
                 {city}, {` `}
                 {country}
               </h1>
@@ -462,9 +462,13 @@ export const Main = ({
                 {`${days[new Date().getDay()]}, ${months[new Date().getMonth()]}, ${new Date().getDay()}, ${new Date().getFullYear()}`}
               </span>
             </div>
-            <div className="flex items-center gap-4">
-              <img className="w-20 object-contain" src={src} alt="weather" />
-              <span className="font-DM-Sans text-neutral-0 text-6xl font-bold italic">
+            <div className="flex items-center gap-4 lg:gap-6">
+              <img
+                className="w-20 object-contain lg:w-28"
+                src={src}
+                alt="weather"
+              />
+              <span className="font-DM-Sans text-neutral-0 text-6xl font-bold italic lg:text-7xl">
                 {temperature}°
               </span>
             </div>
@@ -754,7 +758,21 @@ const HourlyDropDownButton = ({
   );
 };
 
-export const Error = () => {
+type ErrorProp = {
+  onClick: () => void;
+};
+
+export const Error = ({ onClick }: ErrorProp) => {
+  const [clicked, setClicked] = useState(false);
+
+  const handleClick = () => {
+    setClicked(true);
+    setTimeout(() => {
+      setClicked(false);
+    }, 1000);
+    onClick();
+  };
+
   return (
     <>
       <section className="flex flex-1 flex-col items-center justify-center gap-4">
@@ -766,8 +784,13 @@ export const Error = () => {
           We couldn't connect server (API error).Please try again in a few
           moments.
         </p>
-        <button className="text-neutral-0 font-DM-Sans focus:outline-neutral-0 flex cursor-pointer items-center gap-2 rounded-lg bg-neutral-800 px-4 py-1 transition-colors hover:bg-neutral-700 focus:outline-2 focus:outline-offset-[0.1875rem]">
-          <RefreshCw className="w-4" />
+        <button
+          onClick={handleClick}
+          className="text-neutral-0 font-DM-Sans focus:outline-neutral-0 flex cursor-pointer items-center gap-2 rounded-lg bg-neutral-800 px-4 py-1 transition-colors hover:bg-neutral-700 focus:outline-2 focus:outline-offset-[0.1875rem]"
+        >
+          <RefreshCw
+            className={`${clicked ? "animate-spin" : "animate-none"} w-4`}
+          />
           Retry
         </button>
       </section>

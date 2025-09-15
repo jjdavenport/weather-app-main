@@ -58,8 +58,8 @@ function App() {
       );
       const result = await response.json();
       setWeather(result);
-      setError(false);
       setLoading(false);
+      setError(false);
     } catch {
       setError(true);
     }
