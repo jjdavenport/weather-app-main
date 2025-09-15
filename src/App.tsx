@@ -58,6 +58,30 @@ function App() {
       );
       const result = await response.json();
 
+      const weatherIcons = {
+        0: sunny,
+        1: partlyCloudy,
+        2: partlyCloudy,
+        3: overcast,
+        45: fog,
+        48: fog,
+        51: drizzle,
+        53: drizzle,
+        55: drizzle,
+        61: rain,
+        63: rain,
+        65: rain,
+        71: snow,
+        73: snow,
+        75: snow,
+        77: snow,
+        80: rain,
+        81: rain,
+        82: rain,
+        85: snow,
+        86: snow,
+      };
+
       const {
         hourly: {
           time,
@@ -66,8 +90,14 @@ function App() {
           relative_humidity_2m,
           precipitation,
           wind_speed_10m,
+          weather_code,
         },
       } = result;
+
+      const index =
+        weather_code[
+          time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
+        ];
 
       const windSpeed =
         wind_speed_10m[
@@ -88,12 +118,14 @@ function App() {
         apparent_temperature[
           time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
         ];
+
       const temperature =
         temperature_2m[
           time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
         ];
 
       setWeather(result);
+      setSrc(weatherIcons[index]);
       setWindSpeed(windSpeed);
       setPrecipitation(rainfall);
       setTemperature(temperature);
