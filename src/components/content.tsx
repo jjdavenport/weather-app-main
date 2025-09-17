@@ -605,16 +605,14 @@ const DailyListItem = (props: DailyListItemProps) => {
   return (
     <>
       <li className="flex h-44 flex-col items-center justify-between rounded-xl border border-neutral-600 bg-neutral-800 px-3 py-3 lg:h-full">
-        {loading ? null : (
-          <>
-            <span className="text-neutral-0 font-DM-Sans">{day}</span>
-            <img className="w-20 object-contain" src={src} alt={alt} />
-            <div className="flex w-full justify-between">
-              <span className="text-neutral-0 font-DM-Sans">{high}°</span>
-              <span className="font-DM-Sans text-neutral-200">{low}°</span>
-            </div>
-          </>
-        )}
+        <>
+          <span className="text-neutral-0 font-DM-Sans">{day}</span>
+          <img className="w-20 object-contain" src={src} alt={alt} />
+          <div className="flex w-full justify-between">
+            <span className="text-neutral-0 font-DM-Sans">{high}°</span>
+            <span className="font-DM-Sans text-neutral-200">{low}°</span>
+          </div>
+        </>
       </li>
     </>
   );
@@ -632,7 +630,7 @@ export const HourlyList = ({ loading, day, setDay, data }: HourlyListProp) => {
   return (
     <>
       <section className="flex max-h-[50rem] flex-col gap-4 rounded-xl bg-neutral-800 pb-4 lg:col-span-2 lg:col-start-5 lg:row-span-6 lg:row-start-1">
-        <div className="relative flex justify-between px-4 pt-4">
+        <div className="relative flex items-center justify-between px-4 pt-4">
           <span className="text-neutral-0 font-DM-Sans">Hourly forecast</span>
           <HourlyDropDown
             text={day}
