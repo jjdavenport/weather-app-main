@@ -26,7 +26,7 @@ export const Wrapper = ({ children }: Prop) => {
 export const Container = ({ children }: Prop) => {
   return (
     <>
-      <div className="flex w-full max-w-6xl flex-1 flex-col items-center gap-4 pt-4 md:max-w-5xl lg:gap-10">
+      <div className="flex w-full max-w-6xl flex-1 flex-col items-center gap-8 pt-4 md:max-w-5xl lg:gap-10">
         {children}
       </div>
     </>
@@ -75,7 +75,7 @@ export const Header = ({
   return (
     <>
       <header className="relative flex w-11/12 justify-between lg:w-full">
-        <img className="object-contain" src={logo} alt="logo" />
+        <img className="w-40 object-contain lg:w-auto" src={logo} alt="logo" />
         <HeaderDropdown open={menu} onClick={() => setMenu(!menu)} />
         {menu && (
           <HeaderMenu
@@ -305,7 +305,7 @@ type FormProp = {
 
 export const Form = ({ searching }: FormProp) => {
   return (
-    <form className="flex w-full flex-col items-center gap-4 lg:w-7/12 lg:flex-row">
+    <form className="flex w-full flex-col items-center gap-3 lg:w-7/12 lg:flex-row">
       <Search searching={searching} />
       <SearchButton />
     </form>
@@ -553,48 +553,68 @@ const ListItem = ({ text, unit, loading, value }: ListItemProps) => {
 
 type DailyListProp = {
   data: [];
+  loading: boolean;
 };
 
-export const DailyList = ({ data }: DailyListProp) => {
+export const DailyList = ({ data, loading }: DailyListProp) => {
   return (
     <>
       <section className="flex flex-col gap-2 lg:col-span-4 lg:row-span-2 lg:row-start-5 lg:gap-4">
         <span className="text-neutral-0 font-DM-Sans">Daily forecast</span>
         <ul className="grid grid-cols-3 gap-4 lg:h-full lg:grid-cols-7 lg:grid-rows-1">
-          {data.map((i, index) => (
-            <DailyListItem
-              key={index}
-              day={i.day}
-              high={i.high}
-              low={i.low}
-              src={i.src}
-              alt={i.alt}
-            />
-          ))}
+          {loading
+            ? Array.from({ length: 7 }).map((_, index) => (
+                <DailyListItem key={index} loading={loading} />
+              ))
+            : data.map((i, index) => (
+                <DailyListItem
+                  key={index}
+                  loading={loading}
+                  day={i.day}
+                  high={i.high}
+                  low={i.low}
+                  src={i.src}
+                  alt={i.alt}
+                />
+              ))}
         </ul>
       </section>
     </>
   );
 };
 
-type DailyListItemProps = {
-  day: string;
-  src: string;
-  alt: string;
-  high: string;
-  low: string;
-};
+type DailyListItemProps =
+  | { loading: true }
+  | {
+      loading: false;
+      day: string;
+      src: string;
+      alt: string;
+      high: string;
+      low: string;
+    };
 
-const DailyListItem = ({ day, src, alt, high, low }: DailyListItemProps) => {
+const DailyListItem = (props: DailyListItemProps) => {
+  if (props.loading) {
+    return (
+      <li className="flex h-44 flex-col items-center justify-between rounded-xl border border-neutral-600 bg-neutral-800 px-3 py-3 lg:h-full"></li>
+    );
+  }
+
+  const { day, src, alt, high, low } = props;
   return (
     <>
-      <li className="flex h-44 flex-col items-center justify-between rounded-xl border border-neutral-600 bg-neutral-800 px-3 py-3 lg:h-40 lg:w-24">
-        <span className="text-neutral-0 font-DM-Sans">{day}</span>
-        <img className="w-20 object-contain" src={src} alt={alt} />
-        <div className="flex w-full justify-between">
-          <span className="text-neutral-0 font-DM-Sans">{high}°</span>
-          <span className="font-DM-Sans text-neutral-200">{low}°</span>
-        </div>
+      <li className="flex h-44 flex-col items-center justify-between rounded-xl border border-neutral-600 bg-neutral-800 px-3 py-3 lg:h-full">
+        {loading ? null : (
+          <>
+            <span className="text-neutral-0 font-DM-Sans">{day}</span>
+            <img className="w-20 object-contain" src={src} alt={alt} />
+            <div className="flex w-full justify-between">
+              <span className="text-neutral-0 font-DM-Sans">{high}°</span>
+              <span className="font-DM-Sans text-neutral-200">{low}°</span>
+            </div>
+          </>
+        )}
       </li>
     </>
   );
@@ -611,8 +631,8 @@ export const HourlyList = ({ loading, day, setDay, data }: HourlyListProp) => {
   const [menu, setMenu] = useState(false);
   return (
     <>
-      <section className="flex flex-col gap-4 rounded-xl bg-neutral-800 p-4 lg:col-span-2 lg:col-start-5 lg:row-span-6 lg:row-start-1">
-        <div className="relative flex justify-between">
+      <section className="flex max-h-[50rem] flex-col gap-4 rounded-xl bg-neutral-800 pb-4 lg:col-span-2 lg:col-start-5 lg:row-span-6 lg:row-start-1">
+        <div className="relative flex justify-between px-4 pt-4">
           <span className="text-neutral-0 font-DM-Sans">Hourly forecast</span>
           <HourlyDropDown
             text={day}
@@ -628,50 +648,63 @@ export const HourlyList = ({ loading, day, setDay, data }: HourlyListProp) => {
             />
           )}
         </div>
-        <ul className="flex flex-col gap-4">
-          {data.map((i, index) => (
-            <HourlyListItem
-              key={index}
-              alt={i.alt}
-              src={i.src}
-              time={i.time}
-              temperature={i.temperature}
-              loading={loading}
-            />
-          ))}
-        </ul>
+        <div className="scrollbar-thin scrollbar-thumb-neutral-700 max-h-[28rem] overflow-auto lg:max-h-[50rem]">
+          <ul className="flex flex-col gap-4 pr-2 pl-4">
+            {loading
+              ? Array.from({ length: 14 }).map((_, index) => (
+                  <HourlyListItem key={index} loading={loading} />
+                ))
+              : data.map((i, index) => (
+                  <HourlyListItem
+                    key={index}
+                    alt={i.alt}
+                    src={i.src}
+                    time={i.time}
+                    temperature={i.temperature}
+                    loading={loading}
+                  />
+                ))}
+          </ul>
+        </div>
       </section>
     </>
   );
 };
 
-type HourlyListItemProps = {
-  src: string;
-  alt: string;
-  time: string;
-  temperature: string;
-  loading: boolean;
-};
+type HourlyListItemProps =
+  | { loading: true }
+  | {
+      src: string;
+      alt: string;
+      time: string;
+      temperature: string;
+      loading: false;
+    };
 
-const HourlyListItem = ({
-  src,
-  alt,
-  time,
-  temperature,
-  loading,
-}: HourlyListItemProps) => {
+const HourlyListItem = (props: HourlyListItemProps) => {
+  if (props.loading) {
+    return (
+      <li className="flex h-10 w-full animate-pulse items-center justify-between rounded-lg border border-neutral-600 bg-neutral-700 px-2 py-1"></li>
+    );
+  }
+
+  const { src, alt, time, temperature, loading } = props;
   return (
-    <>
-      <li
-        className={`${loading && "animate-pulse"} flex w-full items-center justify-between rounded-lg border border-neutral-600 bg-neutral-700 px-2 py-1`}
-      >
-        <div className="flex items-center gap-1">
-          <img className="w-10 object-contain" src={src} alt={alt} />
-          <span className="text-neutral-0 font-DM-Sans">{time} PM</span>
-        </div>
-        <span className="font-DM-Sans text-neutral-200">{temperature}°</span>
-      </li>
-    </>
+    <li
+      className={`${loading ? "animate-pulse" : ""} flex w-full items-center justify-between rounded-lg border border-neutral-600 bg-neutral-700 px-2 py-1`}
+    >
+      {loading ? (
+        <div className="h-10"></div>
+      ) : (
+        <>
+          <div className="flex items-center gap-1">
+            <img className="w-10 object-contain" src={src} alt={alt} />
+            <span className="text-neutral-0 font-DM-Sans">{time} PM</span>
+          </div>
+          <span className="font-DM-Sans text-neutral-200">{temperature}°</span>
+        </>
+      )}
+    </li>
   );
 };
 

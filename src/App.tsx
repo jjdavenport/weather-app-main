@@ -23,7 +23,7 @@ import sunny from "./assets/images/icon-sunny.webp";
 
 function App() {
   const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [searching, setSearching] = useState(false);
   const [results, setResults] = useState(true);
   const [lat, setLat] = useState(null);
@@ -169,7 +169,6 @@ function App() {
           time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
         ],
       );
-      setLoading(false);
       setError(false);
     } catch {
       setError(true);
@@ -235,7 +234,7 @@ function App() {
                     windSpeedUnit={windSpeedUnit}
                     loading={loading}
                   />
-                  <DailyList data={dailyList} />
+                  <DailyList loading={loading} data={dailyList} />
                   <HourlyList
                     data={hourlyList}
                     day={day}
