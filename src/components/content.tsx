@@ -541,7 +541,11 @@ const ListItem = ({ text, unit, loading, value }: ListItemProps) => {
       <span
         className={`${loading ? "animate-pulse text-neutral-200" : "text-neutral-0"} text-3xl`}
       >
-        {loading ? "_" : unit === "%" ? `${value} ${unit}` : `${value} ${unit}`}
+        {loading
+          ? "_"
+          : unit === "%" || unit === "°"
+            ? `${value}${unit}`
+            : `${value} ${unit}`}
       </span>
     </li>
   );
@@ -556,9 +560,16 @@ export const DailyList = ({ data }: DailyListProp) => {
     <>
       <section className="flex flex-col gap-2 lg:col-span-4 lg:row-span-2 lg:row-start-5 lg:gap-4">
         <span className="text-neutral-0 font-DM-Sans">Daily forecast</span>
-        <ul className="grid grid-cols-2 grid-rows-3 gap-4 lg:h-full lg:grid-cols-7 lg:grid-rows-1">
+        <ul className="grid grid-cols-3 gap-4 lg:h-full lg:grid-cols-7 lg:grid-rows-1">
           {data.map((i, index) => (
-            <DailyListItem high={} low={} src={} />
+            <DailyListItem
+              key={index}
+              day={i.day}
+              high={i.high}
+              low={i.low}
+              src={i.src}
+              alt={i.alt}
+            />
           ))}
         </ul>
       </section>
@@ -577,12 +588,12 @@ type DailyListItemProps = {
 const DailyListItem = ({ day, src, alt, high, low }: DailyListItemProps) => {
   return (
     <>
-      <li className="rounded-xl border border-neutral-600 bg-neutral-800 p-16 lg:p-0">
-        <span>{day}</span>
-        <img src={src} alt={alt} />
-        <div>
-          <span>{high}</span>
-          <span>{low}</span>
+      <li className="flex h-44 flex-col items-center justify-between rounded-xl border border-neutral-600 bg-neutral-800 px-3 py-3 lg:h-40 lg:w-24">
+        <span className="text-neutral-0 font-DM-Sans">{day}</span>
+        <img className="w-20 object-contain" src={src} alt={alt} />
+        <div className="flex w-full justify-between">
+          <span className="text-neutral-0 font-DM-Sans">{high}°</span>
+          <span className="font-DM-Sans text-neutral-200">{low}°</span>
         </div>
       </li>
     </>
@@ -593,9 +604,10 @@ type HourlyListProp = {
   loading: boolean;
   day: string;
   setDay: React.Dispatch<SetStateAction<string>>;
+  data: [];
 };
 
-export const HourlyList = ({ loading, day, setDay }: HourlyListProp) => {
+export const HourlyList = ({ loading, day, setDay, data }: HourlyListProp) => {
   const [menu, setMenu] = useState(false);
   return (
     <>
@@ -617,14 +629,16 @@ export const HourlyList = ({ loading, day, setDay }: HourlyListProp) => {
           )}
         </div>
         <ul className="flex flex-col gap-4">
-          <HourlyListItem loading={loading} />
-          <HourlyListItem loading={loading} />
-          <HourlyListItem loading={loading} />
-          <HourlyListItem loading={loading} />
-          <HourlyListItem loading={loading} />
-          <HourlyListItem loading={loading} />
-          <HourlyListItem loading={loading} />
-          <HourlyListItem loading={loading} />
+          {data.map((i, index) => (
+            <HourlyListItem
+              key={index}
+              alt={i.alt}
+              src={i.src}
+              time={i.time}
+              temperature={i.temperature}
+              loading={loading}
+            />
+          ))}
         </ul>
       </section>
     </>
@@ -635,7 +649,7 @@ type HourlyListItemProps = {
   src: string;
   alt: string;
   time: string;
-  temp: string;
+  temperature: string;
   loading: boolean;
 };
 
@@ -643,19 +657,19 @@ const HourlyListItem = ({
   src,
   alt,
   time,
-  temp,
+  temperature,
   loading,
 }: HourlyListItemProps) => {
   return (
     <>
       <li
-        className={`${loading && "animate-pulse"} h-10 w-full rounded-lg border border-neutral-600 bg-neutral-700`}
+        className={`${loading && "animate-pulse"} flex w-full items-center justify-between rounded-lg border border-neutral-600 bg-neutral-700 px-2 py-1`}
       >
-        <div>
-          <img src={src} alt={alt} />
-          <span>{time}</span>
+        <div className="flex items-center gap-1">
+          <img className="w-10 object-contain" src={src} alt={alt} />
+          <span className="text-neutral-0 font-DM-Sans">{time} PM</span>
         </div>
-        <span>{temp}</span>
+        <span className="font-DM-Sans text-neutral-200">{temperature}°</span>
       </li>
     </>
   );

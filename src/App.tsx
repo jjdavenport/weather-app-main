@@ -42,6 +42,23 @@ function App() {
   const [feelsLike, setFeelsLike] = useState(0);
   const [src, setSrc] = useState(sunny);
   const [alt, setAlt] = useState("weather");
+  const [dailyList, setDailyList] = useState([
+    {
+      day: "Mon",
+      high: 0,
+      low: 0,
+      src: sunny,
+      alt: "",
+    },
+  ]);
+  const [hourlyList, setHOurlyList] = useState([
+    {
+      src: sunny,
+      alt: "",
+      time: 0,
+      temperature: 0,
+    },
+  ]);
 
   const fetchLatLong = async () => {
     const response = await fetch("https://ipapi.co/json/");
@@ -218,8 +235,13 @@ function App() {
                     windSpeedUnit={windSpeedUnit}
                     loading={loading}
                   />
-                  <DailyList />
-                  <HourlyList day={day} setDay={setDay} loading={loading} />
+                  <DailyList data={dailyList} />
+                  <HourlyList
+                    data={hourlyList}
+                    day={day}
+                    setDay={setDay}
+                    loading={loading}
+                  />
                 </div>
               </>
             ) : (
