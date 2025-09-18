@@ -412,29 +412,6 @@ export const Main = ({
   temperature,
   alt,
 }: MainProps) => {
-  const months = [
-    "Jan",
-    "Feb",
-    "March",
-    "April",
-    "May",
-    "Jun",
-    "July",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
-  const days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
   return (
     <>
       <main
@@ -461,7 +438,7 @@ export const Main = ({
                 {country}
               </h1>
               <span className="font-DM-Sans text-neutral-200">
-                {`${days[new Date().getDay()]}, ${months[new Date().getMonth()]}, ${new Date().getDate()}, ${new Date().getFullYear()}`}
+                {`${new Date().toLocaleDateString("en-GB", { weekday: "long" })}, ${[new Date().toLocaleDateString("en-GB", { month: "short" })]}, ${new Date().getDate()}, ${new Date().getFullYear()}`}
               </span>
             </div>
             <div className="flex items-center gap-2 lg:gap-6">
@@ -766,7 +743,7 @@ const HourlyDropDownList = ({
 
   return (
     <>
-      <ul className="font-DM-Sans text-neutral-0 absolute top-12 left-0 z-50 flex w-full flex-col gap-2 rounded-xl border border-neutral-600 bg-neutral-800 p-2 shadow-lg lg:right-0 lg:left-auto lg:w-8/12">
+      <ul className="font-DM-Sans text-neutral-0 absolute top-12 left-0 z-50 flex w-full flex-col gap-2 rounded-xl border border-neutral-600 bg-neutral-800 p-2 shadow-lg lg:top-16 lg:right-4 lg:left-auto lg:w-8/12">
         {days.map((i, index) => (
           <HourlyDropDownButton
             state={state}

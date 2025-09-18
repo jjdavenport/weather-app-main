@@ -136,12 +136,40 @@ function App() {
         },
       } = result;
 
+      const days = Array.from(
+        { length: temperature_2m.length / 24 },
+        (_, i) => {
+          const start = i * 24;
+          const temps = temperature_2m.slice(start, start + 24);
+          const codes = weather_code.slice(start, start + 24);
+
+          const date = new Date(time[start]);
+          const day = date.toLocaleDateString("en-GB", { weekday: "short" });
+
+          const index = codes.reduce((a, b, _, arr) =>
+            arr.filter((x) => x === a).length >=
+            arr.filter((x) => x === b).length
+              ? a
+              : b,
+          );
+
+          return {
+            day,
+            high: Math.max(...temps),
+            low: Math.min(...temps),
+            src: weatherIcons[index],
+            alt: iconsAlt[index],
+          };
+        },
+      ).slice(-7);
+
       const index =
         weather_code[
           time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
         ];
 
       setWeather(result);
+      setDailyList(days);
       setSrc(weatherIcons[index]);
       setAlt(iconsAlt[index]);
       setWindSpeed(
@@ -195,7 +223,8 @@ function App() {
   useEffect(() => {
     console.log(city);
     console.log(country);
-  }, [country, city]);
+    console.log(dailyList);
+  }, [country, city, dailyList]);
 
   useEffect(() => {
     console.log(weather);

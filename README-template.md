@@ -64,7 +64,8 @@ Then crop/optimize/edit your image however you like, add it to your project, and
 - [TypeScript](https://www.typescriptlang.org/) - Statically typed JavaScript
 - [React](https://reactjs.org/) - JS library
 - [tailwind css](https://tailwindcss.com/) - For styles
-- [tailwind-scrollbar](https://github.com/adoxography/tailwind-scrollbar) - hourly list scrollbar
+- [tailwind-scrollbar](https://github.com/adoxography/tailwind-scrollbar) - Hourly list scrollbar
+- [lucide react](https://lucide.dev/) - Icons
 
 **Note: These are just examples. Delete this note and replace the list above with your own choices**
 
