@@ -180,9 +180,7 @@ function App() {
 
         const code = weather_code[i];
         return {
-          time:
-            (date.getHours() % 12 || 12) +
-            (date.getHours() >= 12 ? " PM" : " AM"),
+          time: date.getHours() % 12 || 12,
           temperature: temperature_2m[i],
           code,
           src: weatherIcons[code],

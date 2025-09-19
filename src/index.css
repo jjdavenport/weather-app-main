@@ -21,6 +21,6 @@
   --color-orange-500: hsl(28, 100%, 52%);
   --color-blue-500: hsl(233, 67%, 56%);
   --color-blue-700: hsl(248, 70%, 36%);
-  --background-image-main-mobile: url("./src/assets/images/bg-today-small.svg");
-  --background-image-main-desktop: url("./src/assets/images/bg-today-large.svg");
+  --background-image-main-mobile: url("./assets/images/bg-today-small.svg");
+  --background-image-main-desktop: url("./assets/images/bg-today-large.svg");
 }

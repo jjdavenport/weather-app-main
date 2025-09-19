@@ -625,7 +625,7 @@ export const HourlyList = ({
   return (
     <>
       <section className="flex max-h-[50rem] flex-col gap-4 overflow-hidden rounded-xl bg-neutral-800 lg:col-span-2 lg:col-start-5 lg:row-span-6 lg:row-start-1">
-        <div className="relative flex items-center justify-between px-4 pt-4">
+        <div className="relative flex items-center justify-between px-4 pt-4 lg:px-6 lg:pt-6">
           <span className="text-neutral-0 font-DM-Sans">Hourly forecast</span>
           <HourlyDropDown
             text={day}
@@ -643,7 +643,7 @@ export const HourlyList = ({
           )}
         </div>
         <div className="scrollbar-thin scrollbar-thumb-neutral-700 max-h-[28rem] overflow-auto lg:max-h-[50rem]">
-          <ul className="flex flex-col gap-4 pr-2 pb-4 pl-4">
+          <ul className="flex flex-col gap-4 pr-2 pb-4 pl-4 lg:pr-4 lg:pl-6">
             {loading
               ? Array.from({ length: 14 }).map((_, index) => (
                   <HourlyListItem key={index} loading={loading} />
@@ -671,7 +671,7 @@ type HourlyListItemProps =
       src: string;
       alt: string;
       time: string;
-      temperature: string;
+      temperature: number;
       loading: false;
     };
 
@@ -684,7 +684,7 @@ const HourlyListItem = (props: HourlyListItemProps) => {
 
   const { src, alt, time, temperature, loading } = props;
   return (
-    <li className="flex w-full items-center justify-between rounded-lg border border-neutral-600 bg-neutral-700 px-2 py-1">
+    <li className="flex w-full items-center justify-between rounded-lg border border-neutral-600 bg-neutral-700 px-2 py-1 lg:px-3 lg:py-2">
       {loading ? (
         <div className="h-10"></div>
       ) : (
@@ -695,7 +695,9 @@ const HourlyListItem = (props: HourlyListItemProps) => {
               {time} {time >= 12 ? "AM" : "PM"}
             </span>
           </div>
-          <span className="font-DM-Sans text-neutral-200">{temperature}°</span>
+          <span className="font-DM-Sans text-neutral-200">
+            {temperature.toFixed(0)}°
+          </span>
         </>
       )}
     </li>
@@ -755,7 +757,7 @@ const HourlyDropDownList = ({
 
   return (
     <>
-      <ul className="font-DM-Sans text-neutral-0 absolute top-12 left-0 z-50 flex w-full flex-col gap-2 rounded-xl border border-neutral-600 bg-neutral-800 p-2 shadow-lg lg:top-16 lg:right-4 lg:left-auto lg:w-8/12">
+      <ul className="font-DM-Sans text-neutral-0 absolute inset-x-4 top-16 z-50 flex max-w-full flex-col gap-2 rounded-xl border border-neutral-600 bg-neutral-800 p-2 shadow-lg lg:inset-x-auto lg:right-4 lg:left-auto lg:w-8/12">
         {Array.from({ length: 7 }, (_, i) =>
           new Date(1970, 0, i + 5).toLocaleDateString("en-GB", {
             weekday: "long",
