@@ -8,7 +8,7 @@ import {
   Form,
   Main,
   List,
-  DailyList,
+  WeeklyList,
   HourlyList,
   Error,
   NoResults,
@@ -36,7 +36,7 @@ function App() {
   const [feelsLike, setFeelsLike] = useState(0);
   const [src, setSrc] = useState("");
   const [alt, setAlt] = useState("weather");
-  const [dailyList, setDailyList] = useState([
+  const [weeklyList, setWeeklyList] = useState([
     {
       day: "",
       high: 0,
@@ -45,14 +45,8 @@ function App() {
       alt: "",
     },
   ]);
-  const [hourlyList, setHourlyList] = useState([
-    {
-      src: "",
-      alt: "",
-      time: 0,
-      temperature: 0,
-    },
-  ]);
+  const [hourlyListData, setHourlyListData] = useState({});
+  const [hourlyList, setHourlyList] = useState([]);
   const { weatherIcons, iconsAlt } = useData();
 
   const fetchLatLong = async () => {
@@ -127,15 +121,18 @@ function App() {
         })
         .filter(Boolean);
 
-      console.log(new Date().getHours());
-
       const index =
         weather_code[
           time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
         ];
 
       setWeather(result);
-      setDailyList(days);
+      setWeeklyList(days);
+      setHourlyListData({
+        time,
+        temperature_2m,
+        weather_code,
+      });
       setHourlyList(hours);
       setSrc(weatherIcons[index]);
       setAlt(iconsAlt[index]);
@@ -172,7 +169,29 @@ function App() {
   };
 
   const handleDayChange = (day: string) => {
-    setHourlyList();
+    const { time, temperature_2m, weather_code } = hourlyListData;
+
+    const hours = time
+      .map((t, i) => {
+        const date = new Date(t);
+        const dayName = date.toLocaleDateString("en-GB", { weekday: "long" });
+
+        if (dayName !== day) return null;
+
+        const code = weather_code[i];
+        return {
+          time:
+            (date.getHours() % 12 || 12) +
+            (date.getHours() >= 12 ? " PM" : " AM"),
+          temperature: temperature_2m[i],
+          code,
+          src: weatherIcons[code],
+          alt: iconsAlt[code],
+        };
+      })
+      .filter(Boolean);
+
+    setHourlyList(hours);
   };
 
   useEffect(() => {
@@ -195,7 +214,8 @@ function App() {
     console.log(city);
     console.log(country);
     console.log(hourlyList);
-  }, [country, city, hourlyList]);
+    console.log(hourlyListData);
+  }, [country, city, hourlyList, hourlyListData]);
 
   useEffect(() => {
     console.log(weather);
@@ -235,7 +255,7 @@ function App() {
                     windSpeedUnit={windSpeedUnit}
                     loading={loading}
                   />
-                  <DailyList loading={loading} data={dailyList} />
+                  <WeeklyList loading={loading} data={weeklyList} />
                   <HourlyList
                     onClick={handleDayChange}
                     data={hourlyList}

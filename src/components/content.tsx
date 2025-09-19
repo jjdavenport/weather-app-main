@@ -26,7 +26,7 @@ export const Wrapper = ({ children }: Prop) => {
 export const Container = ({ children }: Prop) => {
   return (
     <>
-      <div className="flex w-full max-w-7xl flex-1 flex-col items-center gap-8 pt-4 md:max-w-5xl lg:gap-10">
+      <div className="flex w-full flex-1 flex-col items-center gap-8 md:max-w-5xl md:px-4 lg:max-w-7xl lg:gap-10 xl:px-0">
         {children}
       </div>
     </>
@@ -74,7 +74,7 @@ export const Header = ({
   });
   return (
     <>
-      <header className="relative flex w-11/12 justify-between lg:w-full">
+      <header className="relative flex w-11/12 justify-between pt-4 lg:w-full">
         <img className="w-40 object-contain lg:w-auto" src={logo} alt="logo" />
         <HeaderDropdown open={menu} onClick={() => setMenu(!menu)} />
         {menu && (
@@ -192,7 +192,7 @@ const HeaderMenu = ({
 
   return (
     <>
-      <div className="absolute top-12 right-0 z-40 flex w-full flex-col rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg lg:w-3/12">
+      <div className="absolute top-16 right-0 z-40 flex w-full flex-col rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg lg:w-3/12">
         <button
           onClick={handleUnitClick}
           className="text-neutral-0 focus:outline-neutral-0 cursor-pointer rounded-lg px-2 py-1 text-left hover:bg-neutral-700 focus:outline focus:outline-offset-1"
@@ -437,7 +437,9 @@ export const Main = ({
                 {city}, {` `}
                 {country}
               </h1>
-              <span className="font-DM-Sans text-neutral-200"></span>
+              <span className="font-DM-Sans text-neutral-200">
+                {`${new Date().toLocaleDateString("en-GB", { weekday: "long" })}, ${[new Date().toLocaleDateString("en-GB", { month: "short" })]}, ${new Date().getDate()}, ${new Date().getFullYear()}`}
+              </span>
             </div>
             <div className="flex items-center gap-2 lg:gap-6">
               <img
@@ -526,12 +528,12 @@ const ListItem = ({ text, unit, loading, value }: ListItemProps) => {
   );
 };
 
-type DailyListProp = {
+type WeeklyListProp = {
   data: [];
   loading: boolean;
 };
 
-export const DailyList = ({ data, loading }: DailyListProp) => {
+export const WeeklyList = ({ data, loading }: WeeklyListProp) => {
   return (
     <>
       <section className="flex flex-col gap-2 lg:col-span-4 lg:row-span-2 lg:row-start-5 lg:gap-4">
@@ -539,10 +541,10 @@ export const DailyList = ({ data, loading }: DailyListProp) => {
         <ul className="grid grid-cols-3 gap-4 lg:h-full lg:grid-cols-7 lg:grid-rows-1">
           {loading
             ? Array.from({ length: 7 }).map((_, index) => (
-                <DailyListItem key={index} loading={loading} />
+                <WeeklyListItem key={index} loading={loading} />
               ))
             : data.map((i, index) => (
-                <DailyListItem
+                <WeeklyListItem
                   key={index}
                   loading={loading}
                   day={i.day}
@@ -558,18 +560,18 @@ export const DailyList = ({ data, loading }: DailyListProp) => {
   );
 };
 
-type DailyListItemProps =
+type WeeklyListItemProps =
   | { loading: true }
   | {
       loading: false;
       day: string;
       src: string;
       alt: string;
-      high: string;
-      low: string;
+      high: number;
+      low: number;
     };
 
-const DailyListItem = (props: DailyListItemProps) => {
+const WeeklyListItem = (props: WeeklyListItemProps) => {
   if (props.loading) {
     return (
       <li className="flex h-44 flex-col items-center justify-between rounded-xl border border-neutral-600 bg-neutral-800 px-3 py-3 lg:h-full"></li>
@@ -584,8 +586,12 @@ const DailyListItem = (props: DailyListItemProps) => {
           <span className="text-neutral-0 font-DM-Sans">{day}</span>
           <img className="w-20 object-contain" src={src} alt={alt} />
           <div className="flex w-full justify-between">
-            <span className="text-neutral-0 font-DM-Sans">{high}°</span>
-            <span className="font-DM-Sans text-neutral-200">{low}°</span>
+            <span className="text-neutral-0 font-DM-Sans">
+              {high.toFixed(0)}°
+            </span>
+            <span className="font-DM-Sans text-neutral-200">
+              {low.toFixed(0)}°
+            </span>
           </div>
         </>
       </li>
@@ -611,7 +617,7 @@ export const HourlyList = ({
   const [menu, setMenu] = useState(false);
   return (
     <>
-      <section className="flex max-h-[50rem] flex-col gap-4 rounded-xl bg-neutral-800 pb-4 lg:col-span-2 lg:col-start-5 lg:row-span-6 lg:row-start-1">
+      <section className="flex max-h-[50rem] flex-col gap-4 overflow-hidden rounded-xl bg-neutral-800 lg:col-span-2 lg:col-start-5 lg:row-span-6 lg:row-start-1">
         <div className="relative flex items-center justify-between px-4 pt-4">
           <span className="text-neutral-0 font-DM-Sans">Hourly forecast</span>
           <HourlyDropDown
@@ -630,7 +636,7 @@ export const HourlyList = ({
           )}
         </div>
         <div className="scrollbar-thin scrollbar-thumb-neutral-700 max-h-[28rem] overflow-auto lg:max-h-[50rem]">
-          <ul className="flex flex-col gap-4 pr-2 pl-4">
+          <ul className="flex flex-col gap-4 pr-2 pb-4 pl-4">
             {loading
               ? Array.from({ length: 14 }).map((_, index) => (
                   <HourlyListItem key={index} loading={loading} />
