@@ -13,13 +13,7 @@ import {
   Error,
   NoResults,
 } from "./components/content";
-import drizzle from "./assets/images/icon-drizzle.webp";
-import fog from "./assets/images/icon-fog.webp";
-import overcast from "./assets/images/icon-overcast.webp";
-import partlyCloudy from "./assets/images/icon-partly-cloudy.webp";
-import rain from "./assets/images/icon-rain.webp";
-import snow from "./assets/images/icon-snow.webp";
-import sunny from "./assets/images/icon-sunny.webp";
+import useData from "./hooks/useData";
 
 function App() {
   const [error, setError] = useState(false);
@@ -40,25 +34,26 @@ function App() {
   const [windSpeed, setWindSpeed] = useState(0);
   const [precipitation, setPrecipitation] = useState(0);
   const [feelsLike, setFeelsLike] = useState(0);
-  const [src, setSrc] = useState(sunny);
+  const [src, setSrc] = useState("");
   const [alt, setAlt] = useState("weather");
   const [dailyList, setDailyList] = useState([
     {
-      day: "Mon",
+      day: "",
       high: 0,
       low: 0,
-      src: sunny,
+      src: "",
       alt: "",
     },
   ]);
-  const [hourlyList, setHOurlyList] = useState([
+  const [hourlyList, setHourlyList] = useState([
     {
-      src: sunny,
+      src: "",
       alt: "",
       time: 0,
       temperature: 0,
     },
   ]);
+  const { weatherIcons, iconsAlt } = useData();
 
   const fetchLatLong = async () => {
     const response = await fetch("https://ipapi.co/json/");
@@ -70,59 +65,12 @@ function App() {
   };
 
   const fetchWeather = async () => {
+    setLoading(true);
     try {
       const response = await fetch(
         `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m,weather_code,precipitation,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_gusts_10m,wind_direction_10m&temperature_unit=${temperatureUnit}&windspeed_unit=${windSpeedUnit}`,
       );
       const result = await response.json();
-
-      const weatherIcons = {
-        0: sunny,
-        1: partlyCloudy,
-        2: partlyCloudy,
-        3: overcast,
-        45: fog,
-        48: fog,
-        51: drizzle,
-        53: drizzle,
-        55: drizzle,
-        61: rain,
-        63: rain,
-        65: rain,
-        71: snow,
-        73: snow,
-        75: snow,
-        77: snow,
-        80: rain,
-        81: rain,
-        82: rain,
-        85: snow,
-        86: snow,
-      };
-
-      const iconsAlt = {
-        0: "sunny",
-        1: "partly cloudy",
-        2: "partly cloudy",
-        3: "overcast",
-        45: "fog",
-        48: "fog",
-        51: "drizzle",
-        53: "drizzle",
-        55: "drizzle",
-        61: "rain",
-        63: "rain",
-        65: "rain",
-        71: "snow",
-        73: "snow",
-        75: "snow",
-        77: "snow",
-        80: "rain",
-        81: "rain",
-        82: "rain",
-        85: "snow",
-        86: "snow",
-      };
 
       const {
         hourly: {
@@ -163,6 +111,24 @@ function App() {
         },
       ).slice(-7);
 
+      const hours = time
+        .map((t, i) => {
+          const today = new Date().toISOString().slice(0, 10);
+          if (!t.startsWith(today)) return null;
+
+          const code = weather_code[i];
+          return {
+            time: new Date(t).getHours() % 12 || 12,
+            temperature: temperature_2m[i],
+            code,
+            src: weatherIcons[code],
+            alt: iconsAlt[code],
+          };
+        })
+        .filter(Boolean);
+
+      console.log(new Date().getHours());
+
       const index =
         weather_code[
           time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
@@ -170,6 +136,7 @@ function App() {
 
       setWeather(result);
       setDailyList(days);
+      setHourlyList(hours);
       setSrc(weatherIcons[index]);
       setAlt(iconsAlt[index]);
       setWindSpeed(
@@ -204,6 +171,10 @@ function App() {
     }
   };
 
+  const handleDayChange = (day: string) => {
+    setHourlyList();
+  };
+
   useEffect(() => {
     fetchLatLong();
   }, []);
@@ -223,8 +194,8 @@ function App() {
   useEffect(() => {
     console.log(city);
     console.log(country);
-    console.log(dailyList);
-  }, [country, city, dailyList]);
+    console.log(hourlyList);
+  }, [country, city, hourlyList]);
 
   useEffect(() => {
     console.log(weather);
@@ -266,6 +237,7 @@ function App() {
                   />
                   <DailyList loading={loading} data={dailyList} />
                   <HourlyList
+                    onClick={handleDayChange}
                     data={hourlyList}
                     day={day}
                     setDay={setDay}

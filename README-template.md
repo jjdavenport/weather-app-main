@@ -73,17 +73,45 @@ Then crop/optimize/edit your image however you like, add it to your project, and
 
 How to handle default, loading and error states.
 
-Use this section to recap over some of your major learnings while working through this project. Writing these out and providing code samples of areas you want to highlight is a great way to reinforce your own knowledge.
+Learnt new methods to handle time and dates instead of using my own arrays of months and dates , I used built in methods to format the months and days.
 
-To see how you can add code snippets, see below:
+From:
 
-```html
-<h1>Some HTML code I'm proud of</h1>
+```tsx
+const months = [
+  "Jan",
+  "Feb",
+  "March",
+  "April",
+  "May",
+  "Jun",
+  "July",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
+const days = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
+{
+  `${days[new Date().getDay()]}, ${months[new Date().getMonth()]}, ${new Date().getDate()}, ${new Date().getFullYear()}`;
+}
 ```
 
-```css
-.proud-of-this-css {
-  color: papayawhip;
+To:
+
+```tsx
+{
+  `${new Date().toLocaleDateString("en-GB", { weekday: "long" })}, ${[new Date().toLocaleDateString("en-GB", { month: "short" })]}, ${new Date().getDate()}, ${new Date().getFullYear()}`;
 }
 ```
 

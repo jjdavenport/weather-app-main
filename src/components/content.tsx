@@ -26,7 +26,7 @@ export const Wrapper = ({ children }: Prop) => {
 export const Container = ({ children }: Prop) => {
   return (
     <>
-      <div className="flex w-full max-w-6xl flex-1 flex-col items-center gap-8 pt-4 md:max-w-5xl lg:gap-10">
+      <div className="flex w-full max-w-7xl flex-1 flex-col items-center gap-8 pt-4 md:max-w-5xl lg:gap-10">
         {children}
       </div>
     </>
@@ -437,9 +437,7 @@ export const Main = ({
                 {city}, {` `}
                 {country}
               </h1>
-              <span className="font-DM-Sans text-neutral-200">
-                {`${new Date().toLocaleDateString("en-GB", { weekday: "long" })}, ${[new Date().toLocaleDateString("en-GB", { month: "short" })]}, ${new Date().getDate()}, ${new Date().getFullYear()}`}
-              </span>
+              <span className="font-DM-Sans text-neutral-200"></span>
             </div>
             <div className="flex items-center gap-2 lg:gap-6">
               <img
@@ -600,9 +598,16 @@ type HourlyListProp = {
   day: string;
   setDay: React.Dispatch<SetStateAction<string>>;
   data: [];
+  onClick: () => void;
 };
 
-export const HourlyList = ({ loading, day, setDay, data }: HourlyListProp) => {
+export const HourlyList = ({
+  loading,
+  day,
+  setDay,
+  data,
+  onClick,
+}: HourlyListProp) => {
   const [menu, setMenu] = useState(false);
   return (
     <>
@@ -617,6 +622,7 @@ export const HourlyList = ({ loading, day, setDay, data }: HourlyListProp) => {
           />
           {menu && (
             <HourlyDropDownList
+              onClick={onClick}
               state={day}
               setMenu={setMenu}
               setState={setDay}
@@ -665,16 +671,16 @@ const HourlyListItem = (props: HourlyListItemProps) => {
 
   const { src, alt, time, temperature, loading } = props;
   return (
-    <li
-      className={`${loading ? "animate-pulse" : ""} flex w-full items-center justify-between rounded-lg border border-neutral-600 bg-neutral-700 px-2 py-1`}
-    >
+    <li className="flex w-full items-center justify-between rounded-lg border border-neutral-600 bg-neutral-700 px-2 py-1">
       {loading ? (
         <div className="h-10"></div>
       ) : (
         <>
           <div className="flex items-center gap-1">
             <img className="w-10 object-contain" src={src} alt={alt} />
-            <span className="text-neutral-0 font-DM-Sans">{time} PM</span>
+            <span className="text-neutral-0 font-DM-Sans">
+              {time} {time >= 12 ? "AM" : "PM"}
+            </span>
           </div>
           <span className="font-DM-Sans text-neutral-200">{temperature}°</span>
         </>
@@ -719,24 +725,17 @@ type HourlyDropDownListProps = {
   setState: React.Dispatch<SetStateAction<string>>;
   setMenu: React.Dispatch<SetStateAction<boolean>>;
   state: string;
+  onClick: () => void;
 };
 
 const HourlyDropDownList = ({
+  onClick,
   setState,
   setMenu,
   state,
 }: HourlyDropDownListProps) => {
-  const days = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-  ];
-
   const handleClick = (text: string) => {
+    onClick(text);
     setState(text);
     setMenu(false);
   };
@@ -744,7 +743,11 @@ const HourlyDropDownList = ({
   return (
     <>
       <ul className="font-DM-Sans text-neutral-0 absolute top-12 left-0 z-50 flex w-full flex-col gap-2 rounded-xl border border-neutral-600 bg-neutral-800 p-2 shadow-lg lg:top-16 lg:right-4 lg:left-auto lg:w-8/12">
-        {days.map((i, index) => (
+        {Array.from({ length: 7 }, (_, i) =>
+          new Date(1970, 0, i + 5).toLocaleDateString("en-GB", {
+            weekday: "long",
+          }),
+        ).map((i, index) => (
           <HourlyDropDownButton
             state={state}
             onClick={handleClick}
