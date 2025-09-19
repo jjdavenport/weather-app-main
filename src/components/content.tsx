@@ -26,7 +26,7 @@ export const Wrapper = ({ children }: Prop) => {
 export const Container = ({ children }: Prop) => {
   return (
     <>
-      <div className="flex w-full flex-1 flex-col items-center gap-8 md:max-w-5xl md:px-4 lg:max-w-7xl lg:gap-10 xl:px-0">
+      <div className="flex w-full flex-1 flex-col items-center gap-8 md:max-w-5xl md:px-4 lg:max-w-6xl lg:gap-10 xl:px-0">
         {children}
       </div>
     </>
@@ -67,10 +67,10 @@ export const Header = ({
 }: HeaderProps) => {
   const [menu, setMenu] = useState(false);
   const [selected, setSelected] = useState({
-    unit: "Metric",
+    unit: "Imperial",
     temperature: "Celsius (°C)",
-    wind: "km/h",
-    precipitation: "Millimeters (mm)",
+    wind: "mph",
+    precipitation: "Inches (in)",
   });
   return (
     <>
@@ -304,8 +304,15 @@ type FormProp = {
 };
 
 export const Form = ({ searching }: FormProp) => {
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
+
   return (
-    <form className="flex w-full flex-col items-center gap-3 lg:w-7/12 lg:flex-row">
+    <form
+      onSubmit={onSubmit}
+      className="flex w-full flex-col items-center gap-3 lg:w-7/12 lg:flex-row"
+    >
       <Search searching={searching} />
       <SearchButton />
     </form>
