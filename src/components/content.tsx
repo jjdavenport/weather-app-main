@@ -7,7 +7,8 @@ import tick from "../assets/images/icon-checkmark.svg";
 import loading from "../assets/images/icon-loading.svg";
 import type React from "react";
 import { RefreshCw } from "lucide-react";
-import { useRef, useState, type SetStateAction } from "react";
+import { useRef, useState, type RefObject, type SetStateAction } from "react";
+import useClick from "../hooks/useClick";
 
 type Prop = {
   children: React.ReactNode;
@@ -58,12 +59,14 @@ type HeaderProps = {
   setTemperature: React.Dispatch<SetStateAction<string>>;
   setWindSpeedUnit: React.Dispatch<SetStateAction<string>>;
   setPrecipitation: React.Dispatch<SetStateAction<string>>;
+  ref: RefObject<HTMLDivElement>;
 };
 
 export const Header = ({
   setTemperature,
   setWindSpeedUnit,
   setPrecipitation,
+  ref,
 }: HeaderProps) => {
   const [menu, setMenu] = useState(false);
   const [selected, setSelected] = useState({
@@ -72,6 +75,9 @@ export const Header = ({
     wind: "mph",
     precipitation: "Inches (in)",
   });
+
+  useClick({ open: menu, setOpen: setMenu, ref });
+
   return (
     <>
       <header className="relative flex w-11/12 justify-between pt-4 lg:w-full">
@@ -79,6 +85,7 @@ export const Header = ({
         <HeaderDropdown open={menu} onClick={() => setMenu(!menu)} />
         {menu && (
           <HeaderMenu
+            ref={ref}
             selected={selected}
             setSelected={setSelected}
             setPrecipitation={setPrecipitation}
@@ -128,6 +135,7 @@ type HeaderMenuProps = {
     temperature: string;
   };
   setSelected: React.Dispatch<SetStateAction<object>>;
+  ref: RefObject<HTMLDivElement>;
 };
 
 const HeaderMenu = ({
@@ -137,6 +145,7 @@ const HeaderMenu = ({
   setPrecipitation,
   selected,
   setSelected,
+  ref,
 }: HeaderMenuProps) => {
   const handleUnitClick = () => {
     if (selected.unit === "Imperial") {
@@ -192,7 +201,10 @@ const HeaderMenu = ({
 
   return (
     <>
-      <div className="absolute top-16 right-0 z-40 flex w-full flex-col rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg lg:w-3/12">
+      <div
+        ref={ref}
+        className="absolute top-16 right-0 z-40 flex w-full flex-col rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg lg:w-3/12"
+      >
         <button
           onClick={handleUnitClick}
           className="text-neutral-0 focus:outline-neutral-0 cursor-pointer rounded-lg px-2 py-1 text-left hover:bg-neutral-700 focus:outline focus:outline-offset-1"
@@ -301,11 +313,22 @@ export const Title = () => {
 
 type FormProp = {
   searching: boolean;
+  input: string;
+  setInput: React.Dispatch<SetStateAction<string>>;
+  onSearch: () => void;
+  ref: RefObject<HTMLDivElement>;
 };
 
-export const Form = ({ searching }: FormProp) => {
+export const Form = ({
+  onSearch,
+  searching,
+  input,
+  setInput,
+  ref,
+}: FormProp) => {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    onSearch();
   };
 
   return (
@@ -313,7 +336,12 @@ export const Form = ({ searching }: FormProp) => {
       onSubmit={onSubmit}
       className="flex w-full flex-col items-center gap-3 lg:w-7/12 lg:flex-row"
     >
-      <Search searching={searching} />
+      <Search
+        ref={ref}
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        searching={searching}
+      />
       <SearchButton />
     </form>
   );
@@ -321,11 +349,16 @@ export const Form = ({ searching }: FormProp) => {
 
 type SearchProp = {
   searching: boolean;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  ref: RefObject<HTMLDivElement>;
 };
 
-const Search = ({ searching }: SearchProp) => {
+const Search = ({ searching, value, onChange, ref }: SearchProp) => {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
+
+  useClick({ open, setOpen, ref });
 
   const handleClick = () => {
     inputRef.current && inputRef.current.focus();
@@ -341,22 +374,27 @@ const Search = ({ searching }: SearchProp) => {
         <img src={search} alt="search" />
         <input
           ref={inputRef}
-          className="font-DM-Sans w-full cursor-pointer placeholder:text-neutral-200 focus:outline-none"
+          className="font-DM-Sans w-full cursor-pointer text-neutral-200 placeholder:text-neutral-200 focus:outline-none"
           type="text"
           placeholder="Search for a place…"
+          onChange={onChange}
+          value={value}
         />
         {open && searching && <SearchInProgress />}
-        {open && !searching && <SearchList />}
+        {open && !searching && <SearchList ref={ref} />}
       </div>
     </>
   );
 };
 
-const SearchList = () => {
+const SearchList = ({ ref }: { ref: RefObject<HTMLUListElement> }) => {
   const list = ["City Name", "City Name", "City Name", "City Name"];
   return (
     <>
-      <ul className="absolute top-28 left-0 flex w-full flex-col gap-1 rounded-lg bg-neutral-800 p-2 shadow-lg lg:top-14">
+      <ul
+        ref={ref}
+        className="absolute top-28 left-0 flex w-full flex-col gap-1 rounded-lg bg-neutral-800 p-2 shadow-lg lg:top-14"
+      >
         {list.map((i, index) => (
           <SearchListItem text={i} key={index} />
         ))}
@@ -519,17 +557,20 @@ type ListItemProps = {
 };
 
 const ListItem = ({ text, unit, loading, value }: ListItemProps) => {
+  const displayUnit = unit === "kmh" ? "km/h" : unit;
   return (
     <li className="font-DM-Sans text-neutral-0 flex flex-col gap-4 rounded-xl border border-neutral-600 bg-neutral-800 px-4 py-3">
       <span className="text-neutral-200">{text}</span>
       <span
-        className={`${loading ? "animate-pulse text-neutral-200" : "text-neutral-0"} text-3xl`}
+        className={`${
+          loading ? "animate-pulse text-neutral-200" : "text-neutral-0"
+        } text-3xl`}
       >
         {loading
           ? "_"
-          : unit === "%" || unit === "°"
-            ? `${value}${unit}`
-            : `${value} ${unit}`}
+          : displayUnit === "%" || displayUnit === "°"
+            ? `${value}${displayUnit}`
+            : `${value} ${displayUnit}`}
       </span>
     </li>
   );
@@ -612,6 +653,7 @@ type HourlyListProp = {
   setDay: React.Dispatch<SetStateAction<string>>;
   data: [];
   onClick: () => void;
+  ref: RefObject<HTMLDivElement>;
 };
 
 export const HourlyList = ({
@@ -620,8 +662,12 @@ export const HourlyList = ({
   setDay,
   data,
   onClick,
+  ref,
 }: HourlyListProp) => {
   const [menu, setMenu] = useState(false);
+
+  useClick({ open: menu, setOpen: setMenu, ref });
+
   return (
     <>
       <section className="flex max-h-[50rem] flex-col gap-4 overflow-hidden rounded-xl bg-neutral-800 lg:col-span-2 lg:col-start-5 lg:row-span-6 lg:row-start-1">
@@ -635,6 +681,7 @@ export const HourlyList = ({
           />
           {menu && (
             <HourlyDropDownList
+              ref={ref}
               onClick={onClick}
               state={day}
               setMenu={setMenu}
@@ -691,9 +738,7 @@ const HourlyListItem = (props: HourlyListItemProps) => {
         <>
           <div className="flex items-center gap-1">
             <img className="w-10 object-contain" src={src} alt={alt} />
-            <span className="text-neutral-0 font-DM-Sans">
-              {time} {time >= 12 ? "AM" : "PM"}
-            </span>
+            <span className="text-neutral-0 font-DM-Sans">{time}</span>
           </div>
           <span className="font-DM-Sans text-neutral-200">
             {temperature.toFixed(0)}°
@@ -741,6 +786,7 @@ type HourlyDropDownListProps = {
   setMenu: React.Dispatch<SetStateAction<boolean>>;
   state: string;
   onClick: () => void;
+  ref: RefObject<HTMLUListElement>;
 };
 
 const HourlyDropDownList = ({
@@ -748,6 +794,7 @@ const HourlyDropDownList = ({
   setState,
   setMenu,
   state,
+  ref,
 }: HourlyDropDownListProps) => {
   const handleClick = (text: string) => {
     onClick(text);
@@ -757,7 +804,10 @@ const HourlyDropDownList = ({
 
   return (
     <>
-      <ul className="font-DM-Sans text-neutral-0 absolute inset-x-4 top-16 z-50 flex max-w-full flex-col gap-2 rounded-xl border border-neutral-600 bg-neutral-800 p-2 shadow-lg lg:inset-x-auto lg:right-4 lg:left-auto lg:w-8/12">
+      <ul
+        ref={ref}
+        className="font-DM-Sans text-neutral-0 absolute inset-x-4 top-16 z-50 flex max-w-full flex-col gap-2 rounded-xl border border-neutral-600 bg-neutral-800 p-2 shadow-lg lg:inset-x-auto lg:right-4 lg:left-auto lg:w-8/12"
+      >
         {Array.from({ length: 7 }, (_, i) =>
           new Date(1970, 0, i + 5).toLocaleDateString("en-GB", {
             weekday: "long",
@@ -828,10 +878,10 @@ export const Error = ({ onClick }: ErrorProp) => {
         </p>
         <button
           onClick={handleClick}
-          className="text-neutral-0 font-DM-Sans focus:outline-neutral-0 flex cursor-pointer items-center gap-2 rounded-lg bg-neutral-800 px-4 py-1 transition-colors hover:bg-neutral-700 focus:outline-2 focus:outline-offset-[0.1875rem]"
+          className="text-neutral-0 font-DM-Sans group focus:outline-neutral-0 flex cursor-pointer items-center gap-2 rounded-lg bg-neutral-800 px-4 py-1 transition-colors hover:bg-neutral-700 focus:outline-2 focus:outline-offset-[0.1875rem]"
         >
           <RefreshCw
-            className={`${clicked ? "animate-spin" : "animate-none"} w-4`}
+            className={`${clicked ? "animate-spin" : "animate-none"} w-4 group-hover:animate-spin`}
           />
           Retry
         </button>

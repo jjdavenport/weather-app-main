@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Footer,
   Wrapper,
@@ -36,6 +36,7 @@ function App() {
   const [feelsLike, setFeelsLike] = useState(0);
   const [src, setSrc] = useState("");
   const [alt, setAlt] = useState("weather");
+  const [input, setInput] = useState("");
   const [weeklyList, setWeeklyList] = useState([
     {
       day: "",
@@ -48,6 +49,19 @@ function App() {
   const [hourlyListData, setHourlyListData] = useState({});
   const [hourlyList, setHourlyList] = useState([]);
   const { weatherIcons, iconsAlt } = useData();
+  const menuRef = useRef(null);
+
+  const fetchCity = async () => {
+    const response = await fetch(
+      `https://api.api-ninjas.com/v1/city?name=${city}`,
+    );
+    const result = await response.json();
+    setLat(result.latitude);
+    setLong(result.longitude);
+    setCity(result.name);
+    setCountry(result.country);
+    setInput("");
+  };
 
   const fetchLatLong = async () => {
     const response = await fetch("https://ipapi.co/json/");
@@ -154,7 +168,7 @@ function App() {
       setFeelsLike(
         apparent_temperature[
           time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
-        ],
+        ].toFixed(0),
       );
       setHumidity(
         relative_humidity_2m[
@@ -213,7 +227,8 @@ function App() {
     console.log(country);
     console.log(hourlyList);
     console.log(hourlyListData);
-  }, [country, city, hourlyList, hourlyListData]);
+    console.log(input);
+  }, [country, city, hourlyList, hourlyListData, input]);
 
   useEffect(() => {
     console.log(weather);
@@ -223,6 +238,7 @@ function App() {
     <Wrapper>
       <Container>
         <Header
+          ref={menuRef}
           setPrecipitation={setPrecipitationUnit}
           setWindSpeedUnit={setWindSpeedUnit}
           setTemperature={setTemperatureUnit}
@@ -232,7 +248,13 @@ function App() {
         ) : (
           <>
             <Title />
-            <Form searching={searching} />
+            <Form
+              ref={menuRef}
+              onSearch={fetchCity}
+              searching={searching}
+              setInput={setInput}
+              input={input}
+            />
             {results ? (
               <>
                 <div className="flex w-11/12 flex-col gap-4 lg:grid lg:w-full lg:grid-cols-6 lg:grid-rows-6 lg:gap-x-6 lg:gap-y-8">
@@ -255,6 +277,7 @@ function App() {
                   />
                   <WeeklyList loading={loading} data={weeklyList} />
                   <HourlyList
+                    ref={menuRef}
                     onClick={handleDayChange}
                     data={hourlyList}
                     day={day}
