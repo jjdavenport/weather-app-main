@@ -45,6 +45,12 @@ function App() {
       alt: "",
     },
   ]);
+  const [searchList, setSearchList] = useState([
+    "London",
+    "Paris",
+    "New York",
+    "Los Angeles",
+  ]);
   const [hourlyListData, setHourlyListData] = useState({});
   const [hourlyList, setHourlyList] = useState([]);
   const { weatherIcons, iconsAlt } = useData();
@@ -140,12 +146,16 @@ function App() {
 
       const hours = time
         .map((t, i) => {
-          const today = new Date().toISOString().slice(0, 10);
-          if (!t.startsWith(today)) return null;
-
+          const now = new Date();
+          const forecastDate = new Date(t);
+          const isToday =
+            forecastDate.toISOString().slice(0, 10) ===
+            now.toISOString().slice(0, 10);
+          if (!isToday) return null;
+          if (forecastDate.getTime() < now.getTime()) return null;
           const code = weather_code[i];
           return {
-            time: new Date(t).getHours() % 12 || 12,
+            time: forecastDate.getHours() % 12 || 12,
             temperature: temperature_2m[i],
             code,
             src: weatherIcons[code],
@@ -269,6 +279,8 @@ function App() {
           <>
             <Title />
             <Form
+              setCity={setCity}
+              list={searchList}
               buttonRef={searchButtonRef}
               menuRef={searchMenuRef}
               onSearch={fetchCity}

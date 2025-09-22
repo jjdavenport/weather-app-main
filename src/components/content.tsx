@@ -326,6 +326,8 @@ type FormProp = {
   onSearch: () => void;
   menuRef: RefObject<HTMLDivElement>;
   buttonRef: RefObject<HTMLButtonElement>;
+  list: [];
+  setCity: React.Dispatch<SetStateAction<string>>;
 };
 
 export const Form = ({
@@ -335,6 +337,8 @@ export const Form = ({
   setInput,
   menuRef,
   buttonRef,
+  list,
+  setCity,
 }: FormProp) => {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -347,6 +351,8 @@ export const Form = ({
       className="flex w-full flex-col items-center gap-3 lg:w-7/12 lg:flex-row"
     >
       <Search
+        setCity={setCity}
+        list={list}
         menuRef={menuRef}
         buttonRef={buttonRef}
         value={input}
@@ -364,6 +370,8 @@ type SearchProp = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   menuRef: RefObject<HTMLDivElement>;
   buttonRef: RefObject<HTMLButtonElement>;
+  list: [];
+  setCity: React.Dispatch<SetStateAction<string>>;
 };
 
 const Search = ({
@@ -372,6 +380,8 @@ const Search = ({
   onChange,
   menuRef,
   buttonRef,
+  list,
+  setCity,
 }: SearchProp) => {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
@@ -400,14 +410,30 @@ const Search = ({
           value={value}
         />
         {open && searching && <SearchInProgress />}
-        {open && !searching && <SearchList ref={menuRef} />}
+        {open && !searching && (
+          <SearchList
+            setCity={setCity}
+            setMenu={setOpen}
+            list={list}
+            ref={menuRef}
+          />
+        )}
       </div>
     </>
   );
 };
 
-const SearchList = ({ ref }: { ref: RefObject<HTMLUListElement> }) => {
-  const list = ["City Name", "City Name", "City Name", "City Name"];
+const SearchList = ({
+  ref,
+  list,
+  setCity,
+  setMenu,
+}: {
+  ref: RefObject<HTMLUListElement>;
+  list: [];
+  setCity: React.Dispatch<SetStateAction<string>>;
+  setMenu: React.Dispatch<SetStateAction<boolean>>;
+}) => {
   return (
     <>
       <ul
@@ -415,7 +441,12 @@ const SearchList = ({ ref }: { ref: RefObject<HTMLUListElement> }) => {
         className="absolute top-28 left-0 flex w-full flex-col gap-1 rounded-lg bg-neutral-800 p-2 shadow-lg lg:top-14"
       >
         {list.map((i, index) => (
-          <SearchListItem text={i} key={index} />
+          <SearchListItem
+            setCity={setCity}
+            setMenu={setMenu}
+            text={i}
+            key={index}
+          />
         ))}
       </ul>
     </>
@@ -424,13 +455,22 @@ const SearchList = ({ ref }: { ref: RefObject<HTMLUListElement> }) => {
 
 type SearchListitemProp = {
   text: string;
+  setCity: React.Dispatch<SetStateAction<string>>;
+  setMenu: React.Dispatch<SetStateAction<boolean>>;
 };
 
-const SearchListItem = ({ text }: SearchListitemProp) => {
+const SearchListItem = ({ text, setCity, setMenu }: SearchListitemProp) => {
+  const handleClick = (text: string) => {
+    setCity(text);
+    setMenu(false);
+  };
   return (
     <>
       <li>
-        <button className="text-neutral-0 focus:outline-neutral-0 w-full cursor-pointer rounded-lg p-1 outline-neutral-600 hover:bg-neutral-700 hover:outline focus:outline focus:outline-offset-1 lg:px-2 lg:text-left">
+        <button
+          onClick={() => handleClick(text)}
+          className="text-neutral-0 focus:outline-neutral-0 w-full cursor-pointer rounded-lg p-1 outline-neutral-600 hover:bg-neutral-700 hover:outline focus:outline focus:outline-offset-1 lg:px-2 lg:text-left"
+        >
           {text}
         </button>
       </li>
