@@ -3,17 +3,24 @@ import { useEffect, type RefObject, type SetStateAction } from "react";
 const useClick = ({
   open,
   setOpen,
-  ref,
+  menuRef,
+  buttonRef,
 }: {
   open: boolean;
-  setMenu: React.Dispatch<SetStateAction<boolean>>;
-  ref: RefObject<HTMLDivElement>;
+  setMenu: (e: React.Dispatch<SetStateAction<boolean>>) => void;
+  menuRef: RefObject<HTMLDivElement>;
+  buttonRef: RefObject<HTMLButtonElement>;
 }) => {
   useEffect(() => {
     if (!open) return;
 
     const handleClick = (e: MouseEvent | TouchEvent) => {
-      if (ref.current && !ref.current.contains(e.target)) {
+      if (
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target) &&
+        menuRef.current &&
+        !menuRef.current.contains(e.target)
+      ) {
         setOpen(false);
       }
     };
@@ -23,7 +30,7 @@ const useClick = ({
     return () => {
       document.removeEventListener("mousedown", handleClick);
     };
-  }, [open, setOpen, ref]);
+  }, [open, setOpen, menuRef, buttonRef]);
 };
 
 export default useClick;

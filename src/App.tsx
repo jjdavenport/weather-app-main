@@ -19,7 +19,6 @@ function App() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
-  const [results, setResults] = useState(true);
   const [lat, setLat] = useState(null);
   const [long, setLong] = useState(null);
   const [city, setCity] = useState(null);
@@ -49,18 +48,38 @@ function App() {
   const [hourlyListData, setHourlyListData] = useState({});
   const [hourlyList, setHourlyList] = useState([]);
   const { weatherIcons, iconsAlt } = useData();
-  const menuRef = useRef(null);
+  const headerMenuRef = useRef(null);
+  const headerButtonRef = useRef(null);
+  const searchMenuRef = useRef(null);
+  const searchButtonRef = useRef(null);
+  const hourlyMenuRef = useRef(null);
+  const hourlyButtonRef = useRef(null);
 
-  const fetchCity = async () => {
+  const fetchAllCities = async () => {
     const response = await fetch(
-      `https://api.api-ninjas.com/v1/city?name=${city}`,
+      "https://countriesnow.space/api/v0.1/countries/population/cities",
     );
     const result = await response.json();
-    setLat(result.latitude);
-    setLong(result.longitude);
-    setCity(result.name);
-    setCountry(result.country);
-    setInput("");
+  };
+
+  const fetchCity = async () => {
+    try {
+      const response = await fetch(
+        `https://api.api-ninjas.com/v1/city?name=${city}`,
+      );
+      const result = await response.json();
+      if (result.ok) {
+        setLat(result.latitude);
+        setLong(result.longitude);
+        setCity(result.name);
+        setCountry(result.country);
+        setInput("");
+      } else {
+        setError(true);
+      }
+    } catch {
+      setError(true);
+    }
   };
 
   const fetchLatLong = async () => {
@@ -238,7 +257,8 @@ function App() {
     <Wrapper>
       <Container>
         <Header
-          ref={menuRef}
+          buttonRef={headerButtonRef}
+          menuRef={headerMenuRef}
           setPrecipitation={setPrecipitationUnit}
           setWindSpeedUnit={setWindSpeedUnit}
           setTemperature={setTemperatureUnit}
@@ -249,13 +269,14 @@ function App() {
           <>
             <Title />
             <Form
-              ref={menuRef}
+              buttonRef={searchButtonRef}
+              menuRef={searchMenuRef}
               onSearch={fetchCity}
               searching={searching}
               setInput={setInput}
               input={input}
             />
-            {results ? (
+            {weather !== null ? (
               <>
                 <div className="flex w-11/12 flex-col gap-4 lg:grid lg:w-full lg:grid-cols-6 lg:grid-rows-6 lg:gap-x-6 lg:gap-y-8">
                   <Main
@@ -277,7 +298,8 @@ function App() {
                   />
                   <WeeklyList loading={loading} data={weeklyList} />
                   <HourlyList
-                    ref={menuRef}
+                    buttonRef={hourlyButtonRef}
+                    menuRef={hourlyMenuRef}
                     onClick={handleDayChange}
                     data={hourlyList}
                     day={day}

@@ -59,14 +59,16 @@ type HeaderProps = {
   setTemperature: React.Dispatch<SetStateAction<string>>;
   setWindSpeedUnit: React.Dispatch<SetStateAction<string>>;
   setPrecipitation: React.Dispatch<SetStateAction<string>>;
-  ref: RefObject<HTMLDivElement>;
+  menuRef: RefObject<HTMLDivElement>;
+  buttonRef: RefObject<HTMLButtonElement>;
 };
 
 export const Header = ({
   setTemperature,
   setWindSpeedUnit,
   setPrecipitation,
-  ref,
+  menuRef,
+  buttonRef,
 }: HeaderProps) => {
   const [menu, setMenu] = useState(false);
   const [selected, setSelected] = useState({
@@ -76,16 +78,20 @@ export const Header = ({
     precipitation: "Inches (in)",
   });
 
-  useClick({ open: menu, setOpen: setMenu, ref });
+  useClick({ open: menu, setOpen: setMenu, menuRef, buttonRef });
 
   return (
     <>
       <header className="relative flex w-11/12 justify-between pt-4 lg:w-full">
         <img className="w-40 object-contain lg:w-auto" src={logo} alt="logo" />
-        <HeaderDropdown open={menu} onClick={() => setMenu(!menu)} />
+        <HeaderDropdown
+          ref={buttonRef}
+          open={menu}
+          onClick={() => setMenu(!menu)}
+        />
         {menu && (
           <HeaderMenu
-            ref={ref}
+            ref={menuRef}
             selected={selected}
             setSelected={setSelected}
             setPrecipitation={setPrecipitation}
@@ -102,12 +108,14 @@ export const Header = ({
 type HeaderDropdownProp = {
   onClick: () => void;
   open: boolean;
+  ref: RefObject<HTMLButtonElement>;
 };
 
-const HeaderDropdown = ({ onClick, open }: HeaderDropdownProp) => {
+const HeaderDropdown = ({ onClick, open, ref }: HeaderDropdownProp) => {
   return (
     <nav>
       <button
+        ref={ref}
         onClick={onClick}
         className="font-DM-Sans text-neutral-0 focus:outline-neutral-0 flex cursor-pointer gap-2 rounded-lg bg-neutral-800 px-3 py-1 transition-colors hover:bg-neutral-700 focus:outline-2 focus:outline-offset-[0.1875rem]"
       >
@@ -316,7 +324,8 @@ type FormProp = {
   input: string;
   setInput: React.Dispatch<SetStateAction<string>>;
   onSearch: () => void;
-  ref: RefObject<HTMLDivElement>;
+  menuRef: RefObject<HTMLDivElement>;
+  buttonRef: RefObject<HTMLButtonElement>;
 };
 
 export const Form = ({
@@ -324,7 +333,8 @@ export const Form = ({
   searching,
   input,
   setInput,
-  ref,
+  menuRef,
+  buttonRef,
 }: FormProp) => {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -337,7 +347,8 @@ export const Form = ({
       className="flex w-full flex-col items-center gap-3 lg:w-7/12 lg:flex-row"
     >
       <Search
-        ref={ref}
+        menuRef={menuRef}
+        buttonRef={buttonRef}
         value={input}
         onChange={(e) => setInput(e.target.value)}
         searching={searching}
@@ -351,14 +362,21 @@ type SearchProp = {
   searching: boolean;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  ref: RefObject<HTMLDivElement>;
+  menuRef: RefObject<HTMLDivElement>;
+  buttonRef: RefObject<HTMLButtonElement>;
 };
 
-const Search = ({ searching, value, onChange, ref }: SearchProp) => {
+const Search = ({
+  searching,
+  value,
+  onChange,
+  menuRef,
+  buttonRef,
+}: SearchProp) => {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
 
-  useClick({ open, setOpen, ref });
+  useClick({ open, setOpen, menuRef, buttonRef });
 
   const handleClick = () => {
     inputRef.current && inputRef.current.focus();
@@ -368,6 +386,7 @@ const Search = ({ searching, value, onChange, ref }: SearchProp) => {
   return (
     <>
       <div
+        ref={buttonRef}
         onClick={handleClick}
         className="focus-within:outline-neutral-0 relative flex w-11/12 cursor-pointer gap-4 rounded-lg bg-neutral-800 px-4 py-2 transition-colors focus-within:outline-2 focus-within:outline-offset-[0.1875rem] hover:bg-neutral-700 lg:w-full"
       >
@@ -381,7 +400,7 @@ const Search = ({ searching, value, onChange, ref }: SearchProp) => {
           value={value}
         />
         {open && searching && <SearchInProgress />}
-        {open && !searching && <SearchList ref={ref} />}
+        {open && !searching && <SearchList ref={menuRef} />}
       </div>
     </>
   );
@@ -653,7 +672,8 @@ type HourlyListProp = {
   setDay: React.Dispatch<SetStateAction<string>>;
   data: [];
   onClick: () => void;
-  ref: RefObject<HTMLDivElement>;
+  buttonRef: RefObject<HTMLButtonElement>;
+  menuRef: RefObject<HTMLDivElement>;
 };
 
 export const HourlyList = ({
@@ -662,11 +682,12 @@ export const HourlyList = ({
   setDay,
   data,
   onClick,
-  ref,
+  buttonRef,
+  menuRef,
 }: HourlyListProp) => {
   const [menu, setMenu] = useState(false);
 
-  useClick({ open: menu, setOpen: setMenu, ref });
+  useClick({ open: menu, setOpen: setMenu, menuRef, buttonRef });
 
   return (
     <>
@@ -674,6 +695,7 @@ export const HourlyList = ({
         <div className="relative flex items-center justify-between px-4 pt-4 lg:px-6 lg:pt-6">
           <span className="text-neutral-0 font-DM-Sans">Hourly forecast</span>
           <HourlyDropDown
+            ref={buttonRef}
             text={day}
             loading={loading}
             open={menu}
@@ -681,7 +703,7 @@ export const HourlyList = ({
           />
           {menu && (
             <HourlyDropDownList
-              ref={ref}
+              ref={menuRef}
               onClick={onClick}
               state={day}
               setMenu={setMenu}
@@ -754,6 +776,7 @@ type HourlyDropDownProp = {
   open: boolean;
   onClick: () => void;
   text: string;
+  ref: RefObject<HTMLButtonElement>;
 };
 
 const HourlyDropDown = ({
@@ -761,11 +784,13 @@ const HourlyDropDown = ({
   open,
   onClick,
   text,
+  ref,
 }: HourlyDropDownProp) => {
   return (
     <>
       <nav>
         <button
+          ref={ref}
           onClick={onClick}
           className="font-DM-Sans text-neutral-0 focus:outline-neutral-0 flex cursor-pointer gap-2 rounded-lg bg-neutral-600 px-3 py-1 transition-colors hover:bg-neutral-700 focus:outline-2 focus:outline-offset-[0.1875rem]"
         >
