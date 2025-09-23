@@ -62,10 +62,14 @@ function App() {
   const hourlyButtonRef = useRef(null);
 
   const fetchAllCities = async () => {
-    const response = await fetch(
-      "https://countriesnow.space/api/v0.1/countries/population/cities",
-    );
-    const result = await response.json();
+    try {
+      const response = await fetch(
+        "https://countriesnow.space/api/v0.1/countries/population/cities",
+      );
+      const result = await response.json();
+    } catch {
+      setError(true);
+    }
   };
 
   const fetchCity = async () => {

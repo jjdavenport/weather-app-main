@@ -7,7 +7,13 @@ import tick from "../assets/images/icon-checkmark.svg";
 import loading from "../assets/images/icon-loading.svg";
 import type React from "react";
 import { RefreshCw } from "lucide-react";
-import { useRef, useState, type RefObject, type SetStateAction } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type RefObject,
+  type SetStateAction,
+} from "react";
 import useClick from "../hooks/useClick";
 
 type Prop = {
@@ -89,17 +95,16 @@ export const Header = ({
           open={menu}
           onClick={() => setMenu(!menu)}
         />
-        {menu && (
-          <HeaderMenu
-            ref={menuRef}
-            selected={selected}
-            setSelected={setSelected}
-            setPrecipitation={setPrecipitation}
-            setWindSpeedUnit={setWindSpeedUnit}
-            setTemperature={setTemperature}
-            onClose={() => setMenu(false)}
-          />
-        )}
+        <HeaderMenu
+          open={menu}
+          ref={menuRef}
+          selected={selected}
+          setSelected={setSelected}
+          setPrecipitation={setPrecipitation}
+          setWindSpeedUnit={setWindSpeedUnit}
+          setTemperature={setTemperature}
+          onClose={() => setMenu(false)}
+        />
       </header>
     </>
   );
@@ -144,6 +149,7 @@ type HeaderMenuProps = {
   };
   setSelected: React.Dispatch<SetStateAction<object>>;
   ref: RefObject<HTMLDivElement>;
+  open: boolean;
 };
 
 const HeaderMenu = ({
@@ -154,6 +160,7 @@ const HeaderMenu = ({
   selected,
   setSelected,
   ref,
+  open,
 }: HeaderMenuProps) => {
   const handleUnitClick = () => {
     if (selected.unit === "Imperial") {
@@ -182,68 +189,55 @@ const HeaderMenu = ({
 
   const handleTemperatureClick = (value: string) => {
     setSelected((prev) => ({ ...prev, temperature: value }));
-    if (value === "Celsius (°C)") {
-      setTemperature("celsius");
-    } else {
-      setTemperature("fahrenheit");
-    }
+    setTemperature(value === "Celsius (°C)" ? "celsius" : "fahrenheit");
   };
 
   const handleWindSpeedClick = (value: string) => {
     setSelected((prev) => ({ ...prev, wind: value }));
-    if (value === "mph") {
-      setWindSpeedUnit("mph");
-    } else {
-      setWindSpeedUnit("kmh");
-    }
+    setWindSpeedUnit(value === "mph" ? "mph" : "kmh");
   };
 
   const handlePrecipitationClick = (value: string) => {
     setSelected((prev) => ({ ...prev, precipitation: value }));
-    if (value === "Millimeters (mm)") {
-      setPrecipitation("mm");
-    } else {
-      setPrecipitation("in");
-    }
+    setPrecipitation(value === "Millimeters (mm)" ? "mm" : "in");
   };
 
   return (
-    <>
-      <div
-        ref={ref}
-        className="absolute top-16 right-0 z-40 flex w-full flex-col rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg lg:w-3/12"
+    <div
+      ref={ref}
+      data-state={open ? "open" : "closed"}
+      className={`data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 absolute top-16 right-0 z-40 flex w-full flex-col rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg transition-all duration-200 data-[state=closed]:pointer-events-none data-[state=closed]:scale-95 data-[state=closed]:opacity-0 data-[state=open]:pointer-events-auto data-[state=open]:scale-100 data-[state=open]:opacity-100 lg:w-3/12`}
+    >
+      <button
+        onClick={handleUnitClick}
+        className="text-neutral-0 focus:outline-neutral-0 cursor-pointer rounded-lg px-2 py-1 text-left hover:bg-neutral-700 focus:outline focus:outline-offset-1"
       >
-        <button
-          onClick={handleUnitClick}
-          className="text-neutral-0 focus:outline-neutral-0 cursor-pointer rounded-lg px-2 py-1 text-left hover:bg-neutral-700 focus:outline focus:outline-offset-1"
-        >
-          Switch to {selected.unit === "Imperial" ? "Metric" : "Imperial"}
-        </button>
-        <div className="flex flex-col divide-y divide-neutral-600">
-          <HeaderListItem
-            setButton={(value) => handleTemperatureClick(value)}
-            selected={selected.temperature}
-            label="Temperature"
-            buttonOne="Celsius (°C)"
-            buttonTwo="Fahrenheit (°F)"
-          />
-          <HeaderListItem
-            setButton={(value) => handleWindSpeedClick(value)}
-            selected={selected.wind}
-            label="Wind Speed"
-            buttonOne="km/h"
-            buttonTwo="mph"
-          />
-          <HeaderListItem
-            setButton={(value) => handlePrecipitationClick(value)}
-            selected={selected.precipitation}
-            label="Precipitation"
-            buttonOne="Millimeters (mm)"
-            buttonTwo="Inches (in)"
-          />
-        </div>
+        Switch to {selected.unit === "Imperial" ? "Metric" : "Imperial"}
+      </button>
+      <div className="flex flex-col divide-y divide-neutral-600">
+        <HeaderListItem
+          setButton={handleTemperatureClick}
+          selected={selected.temperature}
+          label="Temperature"
+          buttonOne="Celsius (°C)"
+          buttonTwo="Fahrenheit (°F)"
+        />
+        <HeaderListItem
+          setButton={handleWindSpeedClick}
+          selected={selected.wind}
+          label="Wind Speed"
+          buttonOne="km/h"
+          buttonTwo="mph"
+        />
+        <HeaderListItem
+          setButton={handlePrecipitationClick}
+          selected={selected.precipitation}
+          label="Precipitation"
+          buttonOne="Millimeters (mm)"
+          buttonTwo="Inches (in)"
+        />
       </div>
-    </>
+    </div>
   );
 };
 
@@ -410,14 +404,13 @@ const Search = ({
           value={value}
         />
         {open && searching && <SearchInProgress />}
-        {open && !searching && (
-          <SearchList
-            setCity={setCity}
-            setMenu={setOpen}
-            list={list}
-            ref={menuRef}
-          />
-        )}
+        <SearchList
+          open={open && !searching}
+          setCity={setCity}
+          setMenu={setOpen}
+          list={list}
+          ref={menuRef}
+        />
       </div>
     </>
   );
@@ -428,17 +421,20 @@ const SearchList = ({
   list,
   setCity,
   setMenu,
+  open,
 }: {
   ref: RefObject<HTMLUListElement>;
   list: [];
   setCity: React.Dispatch<SetStateAction<string>>;
   setMenu: React.Dispatch<SetStateAction<boolean>>;
+  open: boolean;
 }) => {
   return (
     <>
       <ul
+        data-state={open ? "open" : "closed"}
         ref={ref}
-        className="absolute top-28 left-0 flex w-full flex-col gap-1 rounded-lg bg-neutral-800 p-2 shadow-lg lg:top-14"
+        className="data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 absolute top-28 left-0 flex w-full flex-col gap-1 rounded-lg bg-neutral-800 p-2 shadow-lg transition-all duration-200 data-[state=closed]:pointer-events-none data-[state=closed]:scale-95 data-[state=closed]:opacity-0 data-[state=open]:pointer-events-auto data-[state=open]:scale-100 data-[state=open]:opacity-100 lg:top-14"
       >
         {list.map((i, index) => (
           <SearchListItem
@@ -741,15 +737,14 @@ export const HourlyList = ({
             open={menu}
             onClick={() => setMenu(!menu)}
           />
-          {menu && (
-            <HourlyDropDownList
-              ref={menuRef}
-              onClick={onClick}
-              state={day}
-              setMenu={setMenu}
-              setState={setDay}
-            />
-          )}
+          <HourlyDropDownList
+            open={menu}
+            ref={menuRef}
+            onClick={onClick}
+            state={day}
+            setMenu={setMenu}
+            setState={setDay}
+          />
         </div>
         <div className="scrollbar-thin scrollbar-thumb-neutral-700 max-h-[28rem] overflow-auto lg:max-h-[50rem]">
           <ul className="flex flex-col gap-4 pr-2 pb-4 pl-4 lg:pr-4 lg:pl-6">
@@ -852,6 +847,7 @@ type HourlyDropDownListProps = {
   state: string;
   onClick: () => void;
   ref: RefObject<HTMLUListElement>;
+  open: boolean;
 };
 
 const HourlyDropDownList = ({
@@ -860,6 +856,7 @@ const HourlyDropDownList = ({
   setMenu,
   state,
   ref,
+  open,
 }: HourlyDropDownListProps) => {
   const handleClick = (text: string) => {
     onClick(text);
@@ -870,8 +867,9 @@ const HourlyDropDownList = ({
   return (
     <>
       <ul
+        data-state={open ? "open" : "closed"}
         ref={ref}
-        className="font-DM-Sans text-neutral-0 absolute inset-x-4 top-16 z-50 flex max-w-full flex-col gap-2 rounded-xl border border-neutral-600 bg-neutral-800 p-2 shadow-lg lg:inset-x-auto lg:right-4 lg:left-auto lg:w-8/12"
+        className="font-DM-Sans data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 text-neutral-0 absolute inset-x-4 top-16 z-50 flex max-w-full flex-col gap-2 rounded-xl border border-neutral-600 bg-neutral-800 p-2 shadow-lg transition-all duration-200 data-[state=closed]:pointer-events-none data-[state=closed]:scale-95 data-[state=closed]:opacity-0 data-[state=open]:pointer-events-auto data-[state=open]:scale-100 data-[state=open]:opacity-100 lg:inset-x-auto lg:right-4 lg:left-auto lg:w-8/12"
       >
         {Array.from({ length: 7 }, (_, i) =>
           new Date(1970, 0, i + 5).toLocaleDateString("en-GB", {
