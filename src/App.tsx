@@ -24,7 +24,7 @@ function App() {
   const [city, setCity] = useState(null);
   const [country, setCountry] = useState(null);
   const [weather, setWeather] = useState(null);
-  const [temperatureUnit, setTemperatureUnit] = useState("celsius");
+  const [temperatureUnit, setTemperatureUnit] = useState("fahrenheit");
   const [precipitationUnit, setPrecipitationUnit] = useState("in");
   const [windSpeedUnit, setWindSpeedUnit] = useState("mph");
   const [day, setDay] = useState("Monday");
@@ -150,16 +150,14 @@ function App() {
 
       const hours = time
         .map((t, i) => {
-          const now = new Date();
-          const forecastDate = new Date(t);
-          const isToday =
-            forecastDate.toISOString().slice(0, 10) ===
-            now.toISOString().slice(0, 10);
-          if (!isToday) return null;
-          if (forecastDate.getTime() < now.getTime()) return null;
+          const date = new Date(t);
+          const dayName = date.toLocaleDateString("en-GB", { weekday: "long" });
+
+          if (dayName !== day) return null;
+
           const code = weather_code[i];
           return {
-            time: forecastDate.getHours() % 12 || 12,
+            time: date.getHours() % 12 || 12,
             temperature: temperature_2m[i],
             code,
             src: weatherIcons[code],

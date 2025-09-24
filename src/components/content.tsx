@@ -7,13 +7,7 @@ import tick from "../assets/images/icon-checkmark.svg";
 import loading from "../assets/images/icon-loading.svg";
 import type React from "react";
 import { RefreshCw } from "lucide-react";
-import {
-  useEffect,
-  useRef,
-  useState,
-  type RefObject,
-  type SetStateAction,
-} from "react";
+import { useRef, useState, type RefObject, type SetStateAction } from "react";
 import useClick from "../hooks/useClick";
 
 type Prop = {
