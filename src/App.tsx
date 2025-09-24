@@ -174,6 +174,7 @@ function App() {
         ];
 
       setWeather(result);
+      setDay(new Date().toLocaleDateString("en-GB", { weekday: "long" }));
       setWeeklyList(days);
       setHourlyListData({
         time,
