@@ -732,7 +732,7 @@ export const HourlyList = ({
   console.log(currentTime);
 
   useEffect(() => {
-    timeRef.current.scrollIntoView({ behavior: "smooth" });
+    timeRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [loading, data]);
 
   return (
@@ -769,6 +769,7 @@ export const HourlyList = ({
                     alt={i.alt}
                     src={i.src}
                     time={i.time}
+                    amPm={i.amPm}
                     temperature={i.temperature}
                     loading={loading}
                   />
@@ -788,6 +789,7 @@ type HourlyListItemProps =
       time: string;
       temperature: number;
       loading: false;
+      amPm: string;
     };
 
 const HourlyListItem = forwardRef<HTMLLIElement, HourlyListItemProps>(
@@ -798,7 +800,7 @@ const HourlyListItem = forwardRef<HTMLLIElement, HourlyListItemProps>(
       );
     }
 
-    const { src, alt, time, temperature } = props;
+    const { src, alt, time, temperature, amPm } = props;
     return (
       <li
         ref={ref}
@@ -806,7 +808,9 @@ const HourlyListItem = forwardRef<HTMLLIElement, HourlyListItemProps>(
       >
         <div className="flex items-center gap-1">
           <img className="w-10 object-contain" src={src} alt={alt} />
-          <span className="text-neutral-0 font-DM-Sans">{time}</span>
+          <span className="text-neutral-0 font-DM-Sans pt-1">
+            {time} {amPm}
+          </span>
         </div>
         <span className="font-DM-Sans text-neutral-200">
           {temperature.toFixed(0)}°
@@ -966,7 +970,9 @@ export const Error = ({ onClick }: ErrorProp) => {
 export const NoResults = () => {
   return (
     <>
-      <span>No search result found!</span>
+      <span className="text-neutral-0 font-DM-Sans">
+        No search result found!
+      </span>
     </>
   );
 };

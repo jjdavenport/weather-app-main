@@ -158,6 +158,7 @@ function App() {
           const code = weather_code[i];
           return {
             time: date.getHours() % 12 || 12,
+            amPm: date.getHours() < 12 ? "AM" : "PM",
             temperature: temperature_2m[i],
             code,
             src: weatherIcons[code],
@@ -227,6 +228,7 @@ function App() {
         const code = weather_code[i];
         return {
           time: date.getHours() % 12 || 12,
+          amPm: date.getHours() < 12 ? "AM" : "PM",
           temperature: temperature_2m[i],
           code,
           src: weatherIcons[code],
