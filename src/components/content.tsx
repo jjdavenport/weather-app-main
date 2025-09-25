@@ -5,9 +5,16 @@ import search from "../assets/images/icon-search.svg";
 import cross from "../assets/images/icon-error.svg";
 import tick from "../assets/images/icon-checkmark.svg";
 import loading from "../assets/images/icon-loading.svg";
-import type React from "react";
+import React from "react";
 import { RefreshCw } from "lucide-react";
-import { useRef, useState, type RefObject, type SetStateAction } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useRef,
+  useState,
+  type RefObject,
+  type SetStateAction,
+} from "react";
 import useClick from "../hooks/useClick";
 
 type Prop = {
@@ -716,8 +723,17 @@ export const HourlyList = ({
   menuRef,
 }: HourlyListProp) => {
   const [menu, setMenu] = useState(false);
+  const timeRef = useRef<HTMLLIElement | null>(null);
 
   useClick({ open: menu, setOpen: setMenu, menuRef, buttonRef });
+
+  const date = new Date();
+  const currentTime = date.getHours() % 12 === 0 ? 12 : date.getHours() % 12;
+  console.log(currentTime);
+
+  useEffect(() => {
+    timeRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [loading, data]);
 
   return (
     <>
@@ -748,6 +764,7 @@ export const HourlyList = ({
                 ))
               : data.map((i, index) => (
                   <HourlyListItem
+                    ref={i.time === currentTime ? timeRef : null}
                     key={index}
                     alt={i.alt}
                     src={i.src}
@@ -773,32 +790,31 @@ type HourlyListItemProps =
       loading: false;
     };
 
-const HourlyListItem = (props: HourlyListItemProps) => {
-  if (props.loading) {
-    return (
-      <li className="flex h-10 w-full animate-pulse items-center justify-between rounded-lg border border-neutral-600 bg-neutral-700 px-2 py-1"></li>
-    );
-  }
+const HourlyListItem = forwardRef<HTMLLIElement, HourlyListItemProps>(
+  (props, ref) => {
+    if (props.loading) {
+      return (
+        <li className="flex h-10 w-full animate-pulse items-center justify-between rounded-lg border border-neutral-600 bg-neutral-700 px-2 py-1"></li>
+      );
+    }
 
-  const { src, alt, time, temperature, loading } = props;
-  return (
-    <li className="flex w-full items-center justify-between rounded-lg border border-neutral-600 bg-neutral-700 px-2 py-1 lg:px-3 lg:py-2">
-      {loading ? (
-        <div className="h-10"></div>
-      ) : (
-        <>
-          <div className="flex items-center gap-1">
-            <img className="w-10 object-contain" src={src} alt={alt} />
-            <span className="text-neutral-0 font-DM-Sans">{time}</span>
-          </div>
-          <span className="font-DM-Sans text-neutral-200">
-            {temperature.toFixed(0)}°
-          </span>
-        </>
-      )}
-    </li>
-  );
-};
+    const { src, alt, time, temperature } = props;
+    return (
+      <li
+        ref={ref}
+        className="flex w-full items-center justify-between rounded-lg border border-neutral-600 bg-neutral-700 px-2 py-1 lg:px-3 lg:py-2"
+      >
+        <div className="flex items-center gap-1">
+          <img className="w-10 object-contain" src={src} alt={alt} />
+          <span className="text-neutral-0 font-DM-Sans">{time}</span>
+        </div>
+        <span className="font-DM-Sans text-neutral-200">
+          {temperature.toFixed(0)}°
+        </span>
+      </li>
+    );
+  },
+);
 
 type HourlyDropDownProp = {
   loading: boolean;
