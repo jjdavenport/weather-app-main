@@ -111,13 +111,13 @@ export const Header = ({
   );
 };
 
-type HeaderDropdownProp = {
+type HeaderDropdownProps = {
   onClick: () => void;
   open: boolean;
   ref: RefObject<HTMLButtonElement>;
 };
 
-const HeaderDropdown = ({ onClick, open, ref }: HeaderDropdownProp) => {
+const HeaderDropdown = ({ onClick, open, ref }: HeaderDropdownProps) => {
   return (
     <nav>
       <button
@@ -489,7 +489,10 @@ const SearchInProgress = () => {
 const SearchButton = () => {
   return (
     <>
-      <button className="font-DM-Sans text-neutral-0 w-11/12 cursor-pointer rounded-lg bg-blue-500 p-2 transition-colors hover:bg-blue-700 focus:outline-2 focus:outline-offset-[0.1875rem] focus:outline-blue-500 lg:w-3/12">
+      <button
+        type="submit"
+        className="font-DM-Sans text-neutral-0 w-11/12 cursor-pointer rounded-lg bg-blue-500 p-2 transition-colors hover:bg-blue-700 focus:outline-2 focus:outline-offset-[0.1875rem] focus:outline-blue-500 lg:w-3/12"
+      >
         Search
       </button>
     </>
@@ -729,7 +732,6 @@ export const HourlyList = ({
 
   const date = new Date();
   const currentTime = date.getHours() % 12 === 0 ? 12 : date.getHours() % 12;
-  console.log(currentTime);
 
   useEffect(() => {
     timeRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -970,7 +972,7 @@ export const Error = ({ onClick }: ErrorProp) => {
 export const NoResults = () => {
   return (
     <>
-      <span className="text-neutral-0 font-DM-Sans">
+      <span className="text-neutral-0 font-DM-Sans text-2xl font-bold lg:text-3xl">
         No search result found!
       </span>
     </>

@@ -23,7 +23,7 @@ function App() {
   const [long, setLong] = useState(null);
   const [city, setCity] = useState(null);
   const [country, setCountry] = useState(null);
-  const [weather, setWeather] = useState(null);
+  const [results, setResults] = useState(null);
   const [temperatureUnit, setTemperatureUnit] = useState("fahrenheit");
   const [precipitationUnit, setPrecipitationUnit] = useState("in");
   const [windSpeedUnit, setWindSpeedUnit] = useState("mph");
@@ -75,14 +75,20 @@ function App() {
   const fetchCity = async () => {
     try {
       const response = await fetch(
-        `https://api.api-ninjas.com/v1/city?name=${city}`,
+        `https://nominatim.openstreetmap.org/search?q=${input}&format=json&addressdetails=1&limit=1`,
       );
       const result = await response.json();
-      if (result.ok) {
-        setLat(result.latitude);
-        setLong(result.longitude);
-        setCity(result.name);
-        setCountry(result.country);
+      console.log(result);
+
+      if (result.length > 0) {
+        setLat(result[0].lat);
+        setLong(result[0].lon);
+        setCity(
+          result[0].address?.city ||
+            result[0].address?.town ||
+            result[0].address?.village,
+        );
+        setCountry(result[0].address.country);
         setInput("");
       } else {
         setError(true);
@@ -99,10 +105,14 @@ function App() {
     setLong(result.longitude);
     setCity(result.city);
     setCountry(result.country_name);
+    console.log(result[0]);
   };
 
   const fetchWeather = async () => {
     setLoading(true);
+
+    if (lat === null || long === null) return;
+
     try {
       const response = await fetch(
         `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m,weather_code,precipitation,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_gusts_10m,wind_direction_10m&temperature_unit=${temperatureUnit}&windspeed_unit=${windSpeedUnit}`,
@@ -172,7 +182,7 @@ function App() {
           time.indexOf(new Date().toISOString().slice(0, 13) + ":00")
         ];
 
-      setWeather(result);
+      setResults(result);
       setDay(new Date().toLocaleDateString("en-GB", { weekday: "long" }));
       setWeeklyList(days);
       setHourlyListData({
@@ -245,28 +255,20 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (
-      lat != null &&
-      long != null &&
-      temperatureUnit != null &&
-      precipitationUnit != null &&
-      windSpeedUnit != null
-    ) {
+    if (lat != null && long != null) {
       fetchWeather();
     }
   }, [lat, long, temperatureUnit, precipitationUnit, windSpeedUnit]);
 
   useEffect(() => {
-    console.log(city);
-    console.log(country);
-    console.log(hourlyList);
-    console.log(hourlyListData);
+    console.log(lat);
+    console.log(long);
     console.log(input);
-  }, [country, city, hourlyList, hourlyListData, input]);
+  }, [lat, long, input]);
 
   useEffect(() => {
-    console.log(weather);
-  }, [weather]);
+    console.log(results);
+  }, [results]);
 
   return (
     <Wrapper>
@@ -293,7 +295,7 @@ function App() {
               setInput={setInput}
               input={input}
             />
-            {weather !== null ? (
+            {results !== null ? (
               <>
                 <div className="flex w-11/12 flex-col gap-4 lg:grid lg:w-full lg:grid-cols-6 lg:grid-rows-6 lg:gap-x-6 lg:gap-y-8">
                   <Main
