@@ -72,28 +72,39 @@ function App() {
     }
   };
 
-  const fetchCity = async () => {
+  const fetchCity = async (search?: string) => {
+    const city = search ?? input;
+
+    setLoading(true);
+    setError(false);
+
+    if (!city) return;
+
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${input}&format=json&addressdetails=1&limit=1`,
+        `https://nominatim.openstreetmap.org/search?q=${city}&format=json&addressdetails=1&limit=1`,
       );
       const result = await response.json();
-      console.log(result);
 
-      if (result.length > 0) {
-        setLat(result[0].lat);
-        setLong(result[0].lon);
-        setCity(
-          result[0].address?.city ||
-            result[0].address?.town ||
-            result[0].address?.village,
-        );
-        setCountry(result[0].address.country);
-        setInput("");
-      } else {
+      if (result.length === 0) {
+        console.log("error 1", city);
+        setLoading(false);
         setError(true);
+        return;
       }
-    } catch {
+
+      setLat(result[0].lat);
+      setLong(result[0].lon);
+      setCity(
+        result[0].address?.city ||
+          result[0].address?.town ||
+          result[0].address?.village ||
+          result[0].display_name,
+      );
+      setCountry(result[0].address.country);
+      setInput("");
+    } catch (e) {
+      console.log("error 2", e);
       setError(true);
     }
   };
@@ -286,7 +297,6 @@ function App() {
           <>
             <Title />
             <Form
-              setCity={setCity}
               list={searchList}
               buttonRef={searchButtonRef}
               menuRef={searchMenuRef}

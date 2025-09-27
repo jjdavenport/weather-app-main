@@ -318,11 +318,10 @@ type FormProp = {
   searching: boolean;
   input: string;
   setInput: React.Dispatch<SetStateAction<string>>;
-  onSearch: () => void;
+  onSearch: (city: string) => void;
   menuRef: RefObject<HTMLDivElement>;
   buttonRef: RefObject<HTMLButtonElement>;
   list: [];
-  setCity: React.Dispatch<SetStateAction<string>>;
 };
 
 export const Form = ({
@@ -333,11 +332,10 @@ export const Form = ({
   menuRef,
   buttonRef,
   list,
-  setCity,
 }: FormProp) => {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSearch();
+    onSearch(input);
   };
 
   return (
@@ -346,7 +344,7 @@ export const Form = ({
       className="flex w-full flex-col items-center gap-3 lg:w-7/12 lg:flex-row"
     >
       <Search
-        setCity={setCity}
+        onSearch={onSearch}
         list={list}
         menuRef={menuRef}
         buttonRef={buttonRef}
@@ -366,7 +364,7 @@ type SearchProp = {
   menuRef: RefObject<HTMLDivElement>;
   buttonRef: RefObject<HTMLButtonElement>;
   list: [];
-  setCity: React.Dispatch<SetStateAction<string>>;
+  onSearch: (city: string) => void;
 };
 
 const Search = ({
@@ -376,7 +374,7 @@ const Search = ({
   menuRef,
   buttonRef,
   list,
-  setCity,
+  onSearch,
 }: SearchProp) => {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
@@ -407,7 +405,7 @@ const Search = ({
         {open && searching && <SearchInProgress />}
         <SearchList
           open={open && !searching}
-          setCity={setCity}
+          onSearch={onSearch}
           setMenu={setOpen}
           list={list}
           ref={menuRef}
@@ -420,13 +418,13 @@ const Search = ({
 const SearchList = ({
   ref,
   list,
-  setCity,
+  onSearch,
   setMenu,
   open,
 }: {
   ref: RefObject<HTMLUListElement>;
   list: [];
-  setCity: React.Dispatch<SetStateAction<string>>;
+  onSearch: (city: string) => void;
   setMenu: React.Dispatch<SetStateAction<boolean>>;
   open: boolean;
 }) => {
@@ -439,7 +437,7 @@ const SearchList = ({
       >
         {list.map((i, index) => (
           <SearchListItem
-            setCity={setCity}
+            onClick={onSearch}
             setMenu={setMenu}
             text={i}
             key={index}
@@ -452,13 +450,13 @@ const SearchList = ({
 
 type SearchListitemProp = {
   text: string;
-  setCity: React.Dispatch<SetStateAction<string>>;
+  onClick: (text: string) => void;
   setMenu: React.Dispatch<SetStateAction<boolean>>;
 };
 
-const SearchListItem = ({ text, setCity, setMenu }: SearchListitemProp) => {
+const SearchListItem = ({ text, onClick, setMenu }: SearchListitemProp) => {
   const handleClick = (text: string) => {
-    setCity(text);
+    onClick(text);
     setMenu(false);
   };
   return (
