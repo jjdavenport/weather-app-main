@@ -322,6 +322,9 @@ type FormProp = {
   menuRef: RefObject<HTMLDivElement>;
   buttonRef: RefObject<HTMLButtonElement>;
   list: [];
+  onClick: () => void;
+  setList: React.Dispatch<SetStateAction<string[]>>;
+  cities: string[];
 };
 
 export const Form = ({
@@ -332,10 +335,31 @@ export const Form = ({
   menuRef,
   buttonRef,
   list,
+  onClick,
+  setList,
+  cities,
 }: FormProp) => {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     onSearch(input);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const currentInput = e.target.value;
+    setInput(currentInput);
+
+    if (!currentInput) {
+      setList(["London", "Paris", "New York", "Los Angeles"]);
+      return;
+    }
+
+    const filteredCities = cities
+      .filter((city) =>
+        String(city).toLowerCase().includes(currentInput.toLowerCase()),
+      )
+      .slice(0, 4);
+
+    setList(filteredCities);
   };
 
   return (
@@ -344,12 +368,13 @@ export const Form = ({
       className="flex w-full flex-col items-center gap-3 lg:w-7/12 lg:flex-row"
     >
       <Search
+        onClick={onClick}
         onSearch={onSearch}
         list={list}
         menuRef={menuRef}
         buttonRef={buttonRef}
         value={input}
-        onChange={(e) => setInput(e.target.value)}
+        onChange={(e) => handleChange(e)}
         searching={searching}
       />
       <SearchButton />
@@ -365,6 +390,7 @@ type SearchProp = {
   buttonRef: RefObject<HTMLButtonElement>;
   list: [];
   onSearch: (city: string) => void;
+  onClick: () => void;
 };
 
 const Search = ({
@@ -375,6 +401,7 @@ const Search = ({
   buttonRef,
   list,
   onSearch,
+  onClick,
 }: SearchProp) => {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
@@ -382,6 +409,7 @@ const Search = ({
   useClick({ open, setOpen, menuRef, buttonRef });
 
   const handleClick = () => {
+    onClick();
     inputRef.current && inputRef.current.focus();
     setOpen(!open);
   };
