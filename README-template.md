@@ -20,6 +20,11 @@ This is a solution to the [Weather app challenge on Frontend Mentor](https://www
 
 ## Overview
 
+This is my entry to the Frontend Mentor 30 day Hackathon.
+
+Challenge: [Challenge](https://www.frontendmentor.io/challenges/weather-app-K1FhddVm49)
+Hackathon: [Hackathon](https://www.frontendmentor.io/articles/introducing-the-frontend-mentor-30-day-hackathon)
+
 ### The challenge
 
 Users should be able to:
@@ -54,10 +59,11 @@ Then crop/optimize/edit your image however you like, add it to your project, and
 
 ## My process
 
+First step is too build the components and add necessary dependencies. Next I add the basic UI functionality which is basicly the drop down menus. Then its just a question of fetching from the open-meteo API and destructuring the data and mapping it on the various components.
+
 ### Built with
 
 - Semantic HTML5 markup
-- CSS custom properties
 - Flexbox
 - CSS Grid for the daily list and desktop layout
 - Mobile-first workflow
@@ -115,35 +121,27 @@ To:
 }
 ```
 
-```js
-const proudOfThisFunc = () => {
-  console.log("🎉");
-};
-```
-
 If you want more help with writing markdown, we'd recommend checking out [The Markdown Guide](https://www.markdownguide.org/) to learn more.
 
 **Note: Delete this note and the content within this section and replace with your own learnings.**
 
 ### Continued development
 
-Use this section to outline areas that you want to continue focusing on in future projects. These could be concepts you're still not completely comfortable with or techniques you found useful that you want to refine and perfect.
+After completion of this challenge, I'm planning on learning how to use Figma, so the ui matches the specification exactly.
 
-**Note: Delete this note and the content within this section and replace with your own plans for continued development.**
+Use this section to outline areas that you want to continue focusing on in future projects. These could be concepts you're still not completely comfortable with or techniques you found useful that you want to refine and perfect.
 
 ### Useful resources
 
-- [Example resource 1](https://adoxography.github.io/tailwind-scrollbar/) - These docs helped me configure tailwind scrollbar as I was unfamiliar with how to get it setup or if it was compatible with tailwind V4
+- [Tailwind scrollbar docs](https://adoxography.github.io/tailwind-scrollbar/) - These docs helped me configure tailwind scrollbar as I was unfamiliar with how to get it setup or if it was compatible with tailwind V4
 - [Example resource 2](https://www.example.com) - This is an amazing article which helped me finally understand XYZ. I'd recommend it to anyone still learning this concept.
 
 **Note: Delete this note and replace the list above with resources that helped you during the challenge. These could come in handy for anyone viewing your solution or for yourself when you look back on this project in the future.**
 
 ## Author
 
-- Github - [Add your name here](https://github.com/jjdavenport)
+- Github - [jjdavenport](https://github.com/jjdavenport)
 - Frontend Mentor - [@jjdavenport](https://www.frontendmentor.io/profile/jjdavenport)
-
-**Note: Delete this note and add/remove/edit lines above based on what links you'd like to share.**
 
 ## Acknowledgments
 

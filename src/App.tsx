@@ -53,27 +53,14 @@ function App() {
   ]);
   const [hourlyListData, setHourlyListData] = useState({});
   const [hourlyList, setHourlyList] = useState([]);
-  const [cities, setCities] = useState(null);
-  const { weatherIcons, iconsAlt } = useData();
+  const { weatherIcons, iconsAlt, citiesData } = useData();
+  const [cities, setCities] = useState(citiesData);
   const headerMenuRef = useRef(null);
   const headerButtonRef = useRef(null);
   const searchMenuRef = useRef(null);
   const searchButtonRef = useRef(null);
   const hourlyMenuRef = useRef(null);
   const hourlyButtonRef = useRef(null);
-
-  const fetchCities = async () => {
-    try {
-      const response = await fetch(
-        "https://countriesnow.space/api/v0.1/countries/population/cities",
-      );
-      const result = await response.json();
-      const cities = result.data.map((i) => i.city);
-      setCities(cities);
-    } catch {
-      setError(true);
-    }
-  };
 
   const fetchCity = async (search?: string) => {
     const city = search ?? input;
@@ -275,7 +262,9 @@ function App() {
   useEffect(() => {
     console.log(cities);
     console.log(searchList);
-  }, [cities, searchList]);
+    console.log(city);
+    console.log(country);
+  }, [cities, searchList, city, country]);
 
   useEffect(() => {
     console.log(results);
@@ -299,7 +288,6 @@ function App() {
             <Form
               cities={cities}
               setList={setSearchList}
-              onClick={fetchCities}
               list={searchList}
               buttonRef={searchButtonRef}
               menuRef={searchMenuRef}

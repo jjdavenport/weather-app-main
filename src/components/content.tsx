@@ -322,7 +322,6 @@ type FormProp = {
   menuRef: RefObject<HTMLDivElement>;
   buttonRef: RefObject<HTMLButtonElement>;
   list: [];
-  onClick: () => void;
   setList: React.Dispatch<SetStateAction<string[]>>;
   cities: string[];
 };
@@ -335,7 +334,6 @@ export const Form = ({
   menuRef,
   buttonRef,
   list,
-  onClick,
   setList,
   cities,
 }: FormProp) => {
@@ -353,10 +351,15 @@ export const Form = ({
       return;
     }
 
+    const lowerInput = currentInput.toLowerCase();
+
     const filteredCities = cities
-      .filter((city) =>
-        String(city).toLowerCase().includes(currentInput.toLowerCase()),
-      )
+      .filter((city) => city.toLowerCase().includes(lowerInput))
+      .sort((a, b) => {
+        const aStarts = a.toLowerCase().startsWith(lowerInput) ? 0 : 1;
+        const bStarts = b.toLowerCase().startsWith(lowerInput) ? 0 : 1;
+        return aStarts - bStarts;
+      })
       .slice(0, 4);
 
     setList(filteredCities);
@@ -368,7 +371,6 @@ export const Form = ({
       className="flex w-full flex-col items-center gap-3 lg:w-7/12 lg:flex-row"
     >
       <Search
-        onClick={onClick}
         onSearch={onSearch}
         list={list}
         menuRef={menuRef}
@@ -390,7 +392,6 @@ type SearchProp = {
   buttonRef: RefObject<HTMLButtonElement>;
   list: [];
   onSearch: (city: string) => void;
-  onClick: () => void;
 };
 
 const Search = ({
@@ -401,7 +402,6 @@ const Search = ({
   buttonRef,
   list,
   onSearch,
-  onClick,
 }: SearchProp) => {
   const [open, setOpen] = useState(false);
   const inputRef = useRef(null);
@@ -409,7 +409,6 @@ const Search = ({
   useClick({ open, setOpen, menuRef, buttonRef });
 
   const handleClick = () => {
-    onClick();
     inputRef.current && inputRef.current.focus();
     setOpen(!open);
   };
@@ -563,7 +562,7 @@ export const Main = ({
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center gap-4 lg:flex-row lg:justify-between lg:gap-2 lg:p-8">
             <div className="flex flex-col items-center lg:items-start">
-              <h1 className="font-DM-Sans text-neutral-0 text-center text-2xl font-semibold">
+              <h1 className="font-DM-Sans text-neutral-0 text-center text-2xl font-semibold lg:max-w-96 lg:text-start">
                 {city}, {` `}
                 {country}
               </h1>
