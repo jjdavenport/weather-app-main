@@ -16,6 +16,7 @@ import {
   type SetStateAction,
 } from "react";
 import useClick from "../hooks/useClick";
+import useData from "../hooks/useData";
 
 type Prop = {
   children: React.ReactNode;
@@ -315,7 +316,6 @@ export const Title = () => {
 };
 
 type FormProp = {
-  searching: boolean;
   input: string;
   setInput: React.Dispatch<SetStateAction<string>>;
   onSearch: (city: string) => void;
@@ -323,22 +323,26 @@ type FormProp = {
   buttonRef: RefObject<HTMLButtonElement>;
   list: [];
   setList: React.Dispatch<SetStateAction<string[]>>;
-  cities: string[];
+  searching: boolean;
+  setSearching: React.Dispatch<SetStateAction<boolean>>;
 };
 
 export const Form = ({
   onSearch,
-  searching,
   input,
   setInput,
   menuRef,
   buttonRef,
   list,
   setList,
-  cities,
+  searching,
+  setSearching,
 }: FormProp) => {
+  const [cities, setCities] = useState(null);
+
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setSearching(true);
     onSearch(input);
   };
 
@@ -371,20 +375,21 @@ export const Form = ({
       className="flex w-full flex-col items-center gap-3 lg:w-7/12 lg:flex-row"
     >
       <Search
+        searching={searching}
+        setCities={setCities}
         onSearch={onSearch}
         list={list}
         menuRef={menuRef}
         buttonRef={buttonRef}
         value={input}
         onChange={(e) => handleChange(e)}
-        searching={searching}
       />
       <SearchButton />
     </form>
   );
 };
 
-type SearchProp = {
+type SearchProps = {
   searching: boolean;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -392,24 +397,28 @@ type SearchProp = {
   buttonRef: RefObject<HTMLButtonElement>;
   list: [];
   onSearch: (city: string) => void;
+  setCities: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 const Search = ({
-  searching,
   value,
   onChange,
   menuRef,
   buttonRef,
   list,
   onSearch,
-}: SearchProp) => {
+  setCities,
+  searching,
+}: SearchProps) => {
   const [open, setOpen] = useState(false);
+  const { citiesData } = useData();
   const inputRef = useRef(null);
 
   useClick({ open, setOpen, menuRef, buttonRef });
 
   const handleClick = () => {
     inputRef.current && inputRef.current.focus();
+    setCities(citiesData);
     setOpen(!open);
   };
 
@@ -429,9 +438,9 @@ const Search = ({
           onChange={onChange}
           value={value}
         />
-        {open && searching && <SearchInProgress />}
+        {!open && searching && <SearchInProgress />}
         <SearchList
-          open={open && !searching}
+          open={open}
           onSearch={onSearch}
           setMenu={setOpen}
           list={list}
@@ -454,6 +463,7 @@ const SearchList = ({
   onSearch: (city: string) => void;
   setMenu: React.Dispatch<SetStateAction<boolean>>;
   open: boolean;
+  setSearching: React.Dispatch<SetStateAction<boolean>>;
 }) => {
   return (
     <>
@@ -503,9 +513,11 @@ const SearchListItem = ({ text, onClick, setMenu }: SearchListitemProp) => {
 const SearchInProgress = () => {
   return (
     <>
-      <div className="absolute top-14 left-0 flex w-full gap-4 rounded-lg bg-neutral-800 p-2 shadow-lg">
+      <div className="absolute top-14 left-0 flex w-full gap-3 rounded-lg bg-neutral-800 px-3 py-3 shadow-lg">
         <img src={loading} className="animate-spin" alt="loading" />
-        <span className="text-neutral-0 font-DM-Sans">Search in progress</span>
+        <span className="text-neutral-0 font-DM-Sans text-base">
+          Search in progress
+        </span>
       </div>
     </>
   );

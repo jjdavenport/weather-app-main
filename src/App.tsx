@@ -16,6 +16,7 @@ import {
 import useData from "./hooks/useData";
 
 function App() {
+  const [results, setResults] = useState(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searching, setSearching] = useState(false);
@@ -23,7 +24,6 @@ function App() {
   const [long, setLong] = useState(null);
   const [city, setCity] = useState(null);
   const [country, setCountry] = useState(null);
-  const [results, setResults] = useState(null);
   const [temperatureUnit, setTemperatureUnit] = useState("fahrenheit");
   const [precipitationUnit, setPrecipitationUnit] = useState("in");
   const [windSpeedUnit, setWindSpeedUnit] = useState("mph");
@@ -53,8 +53,7 @@ function App() {
   ]);
   const [hourlyListData, setHourlyListData] = useState({});
   const [hourlyList, setHourlyList] = useState([]);
-  const { weatherIcons, iconsAlt, citiesData } = useData();
-  const [cities, setCities] = useState(citiesData);
+  const { weatherIcons, iconsAlt } = useData();
   const headerMenuRef = useRef(null);
   const headerButtonRef = useRef(null);
   const searchMenuRef = useRef(null);
@@ -104,7 +103,6 @@ function App() {
     setLong(result.longitude);
     setCity(result.city);
     setCountry(result.country_name);
-    console.log(result[0]);
   };
 
   const fetchWeather = async () => {
@@ -257,14 +255,19 @@ function App() {
     if (lat != null && long != null) {
       fetchWeather();
     }
-  }, [lat, long, temperatureUnit, precipitationUnit, windSpeedUnit]);
+  }, [lat, long]);
 
   useEffect(() => {
-    console.log(cities);
+    if (results !== null || error) {
+      setSearching(false);
+    }
+  }, [results, error]);
+
+  useEffect(() => {
     console.log(searchList);
     console.log(city);
     console.log(country);
-  }, [cities, searchList, city, country]);
+  }, [searchList, city, country]);
 
   useEffect(() => {
     console.log(results);
@@ -286,13 +289,13 @@ function App() {
           <>
             <Title />
             <Form
-              cities={cities}
+              searching={searching}
+              setSearching={setSearching}
               setList={setSearchList}
               list={searchList}
               buttonRef={searchButtonRef}
               menuRef={searchMenuRef}
               onSearch={fetchCity}
-              searching={searching}
               setInput={setInput}
               input={input}
             />
