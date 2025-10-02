@@ -1,6 +1,6 @@
 # Frontend Mentor - Weather app solution
 
-This is my solution to the [Weather app challenge on Frontend Mentor](https://www.frontendmentor.io/challenges/weather-app-K1FhddVm49). Frontend Mentor challenges help you improve your coding skills by building realistic projects.
+This is my solution to the [Weather app challenge](https://www.frontendmentor.io/challenges/weather-app-K1FhddVm49) on Frontend Mentor Frontend Mentor challenges help you improve your coding skills by building realistic projects.
 
 ## Table of contents
 
@@ -15,8 +15,6 @@ This is my solution to the [Weather app challenge on Frontend Mentor](https://ww
   - [Useful resources](#useful-resources)
 - [Author](#author)
 - [Acknowledgments](#acknowledgments)
-
-**Note: Delete this note and update the table of contents based on what sections you keep.**
 
 ## Overview
 
@@ -142,9 +140,3 @@ Use this section to outline areas that you want to continue focusing on in futur
 
 - Github - [jjdavenport](https://github.com/jjdavenport)
 - Frontend Mentor - [@jjdavenport](https://www.frontendmentor.io/profile/jjdavenport)
-
-## Acknowledgments
-
-This is where you can give a hat tip to anyone who helped you out on this project. Perhaps you worked in a team or got some inspiration from someone else's solution. This is the perfect place to give them some credit.
-
-**Note: Delete this note and edit this section's content as necessary. If you completed this challenge by yourself, feel free to delete this section entirely.**

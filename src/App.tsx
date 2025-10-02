@@ -91,6 +91,7 @@ function App() {
       );
       setCountry(result[0].address.country);
       setInput("");
+      setSearchList(["London", "Paris", "New York", "Los Angeles"]);
     } catch {
       setError(true);
     }

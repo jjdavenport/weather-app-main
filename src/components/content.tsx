@@ -438,7 +438,7 @@ const Search = ({
           onChange={onChange}
           value={value}
         />
-        {!open && searching && <SearchInProgress />}
+        {searching && <SearchInProgress open={true} />}
         <SearchList
           open={open}
           onSearch={onSearch}
@@ -510,16 +510,17 @@ const SearchListItem = ({ text, onClick, setMenu }: SearchListitemProp) => {
   );
 };
 
-const SearchInProgress = () => {
+const SearchInProgress = ({ open }: { open: boolean }) => {
   return (
-    <>
-      <div className="absolute top-14 left-0 flex w-full gap-3 rounded-lg bg-neutral-800 px-3 py-3 shadow-lg">
-        <img src={loading} className="animate-spin" alt="loading" />
-        <span className="text-neutral-0 font-DM-Sans text-base">
-          Search in progress
-        </span>
-      </div>
-    </>
+    <div
+      data-state={open ? "open" : "closed"}
+      className="data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 absolute top-14 left-0 flex w-full gap-3 rounded-lg bg-neutral-800 px-3 py-3 shadow-lg transition-all duration-1000"
+    >
+      <img src={loading} className="animate-spin" alt="loading" />
+      <span className="text-neutral-0 font-DM-Sans text-base">
+        Search in progress
+      </span>
+    </div>
   );
 };
 
