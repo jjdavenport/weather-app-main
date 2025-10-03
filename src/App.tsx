@@ -63,17 +63,22 @@ function App() {
 
   const fetchCity = async (search?: string) => {
     const city = search ?? input;
+    console.log("[fetchCity] called with:", city);
+
+    if (!city) {
+      return;
+    }
 
     setLoading(true);
     setError(false);
-
-    if (!city) return;
 
     try {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?q=${city}&format=json&addressdetails=1&limit=1`,
       );
       const result = await response.json();
+
+      console.log("[fetchCity] API result:", result);
 
       if (result.length === 0) {
         setLoading(false);
@@ -90,21 +95,41 @@ function App() {
           result[0].display_name,
       );
       setCountry(result[0].address.country);
+
       setInput("");
       setSearchList(["London", "Paris", "New York", "Los Angeles"]);
+
+      setLoading(false);
     } catch {
+      setSearching(false);
       setError(true);
+      setLoading(false);
     }
   };
 
   const fetchLatLong = async () => {
-    const response = await fetch("https://ipapi.co/json/");
-    const result = await response.json();
-    setLat(result.latitude);
-    setLong(result.longitude);
-    setCity(result.city);
-    setCountry(result.country_name);
+    console.log("[fetchLatLong] called");
+
+    try {
+      const response = await fetch("https://ipapi.co/json/");
+      const result = await response.json();
+
+      console.log("[fetchLatLong] API result:", result);
+
+      setLat(result.latitude);
+      setLong(result.longitude);
+      setCity(result.city);
+      setCountry(result.country_name);
+    } catch {
+      setError(true);
+      setSearching(false);
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    fetchLatLong();
+  }, []);
 
   const fetchWeather = async () => {
     setLoading(true);
@@ -249,14 +274,15 @@ function App() {
   };
 
   useEffect(() => {
-    fetchLatLong();
-  }, []);
-
-  useEffect(() => {
-    if (lat != null && long != null) {
+    if (
+      lat != null &&
+      long != null &&
+      temperatureUnit !== null &&
+      windSpeedUnit !== null
+    ) {
       fetchWeather();
     }
-  }, [lat, long]);
+  }, [lat, long, temperatureUnit, windSpeedUnit]);
 
   useEffect(() => {
     if (results !== null || error) {

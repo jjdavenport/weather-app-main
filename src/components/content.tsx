@@ -493,13 +493,16 @@ type SearchListitemProp = {
 
 const SearchListItem = ({ text, onClick, setMenu }: SearchListitemProp) => {
   const handleClick = (text: string) => {
+    console.log("[handleClick] clicked city:", text);
     onClick(text);
     setMenu(false);
   };
+
   return (
     <>
       <li>
         <button
+          type="button"
           onClick={() => handleClick(text)}
           className="text-neutral-0 focus:outline-neutral-0 w-full cursor-pointer rounded-lg p-1 outline-neutral-600 hover:bg-neutral-700 hover:outline focus:outline focus:outline-offset-1 lg:px-2 lg:text-left"
         >
