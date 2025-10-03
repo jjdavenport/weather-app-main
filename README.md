@@ -14,7 +14,6 @@ This is my solution to the [Weather app challenge](https://www.frontendmentor.io
   - [Continued development](#continued-development)
   - [Useful resources](#useful-resources)
 - [Author](#author)
-- [Acknowledgments](#acknowledgments)
 
 ## Overview
 
@@ -96,6 +95,7 @@ const months = [
   "Nov",
   "Dec",
 ];
+
 const days = [
   "Sunday",
   "Monday",

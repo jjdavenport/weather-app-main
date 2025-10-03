@@ -35,7 +35,7 @@ export const Wrapper = ({ children }: Prop) => {
 export const Container = ({ children }: Prop) => {
   return (
     <>
-      <div className="flex w-full flex-1 flex-col items-center gap-8 md:max-w-5xl md:px-4 lg:max-w-6xl lg:gap-10 xl:px-0">
+      <div className="flex w-full flex-1 flex-col items-center gap-6 md:max-w-5xl md:px-4 lg:max-w-6xl xl:px-0">
         {children}
       </div>
     </>
@@ -470,7 +470,7 @@ const SearchList = ({
       <ul
         data-state={open ? "open" : "closed"}
         ref={ref}
-        className="data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 absolute top-28 left-0 flex w-full flex-col gap-1 rounded-lg bg-neutral-800 p-2 shadow-lg transition-all duration-200 data-[state=closed]:pointer-events-none data-[state=closed]:scale-95 data-[state=closed]:opacity-0 data-[state=open]:pointer-events-auto data-[state=open]:scale-100 data-[state=open]:opacity-100 lg:top-14"
+        className={`absolute top-28 left-0 w-full flex-col gap-1 rounded-lg bg-neutral-800 p-2 shadow-lg transition-all duration-200 data-[state=closed]:pointer-events-none data-[state=closed]:scale-95 data-[state=closed]:opacity-0 data-[state=open]:pointer-events-auto data-[state=open]:scale-100 data-[state=open]:opacity-100 lg:top-14 ${list.length === 0 ? "hidden" : "flex"}`}
       >
         {list.map((i, index) => (
           <SearchListItem
@@ -797,7 +797,7 @@ export const HourlyList = ({
           />
         </div>
         <div className="scrollbar-thin scrollbar-thumb-neutral-700 max-h-[28rem] overflow-auto lg:max-h-[50rem]">
-          <ul className="flex flex-col gap-4 pr-2 pb-4 pl-4 lg:pr-4 lg:pl-6">
+          <ul className="flex flex-col gap-6 pr-2 pb-4 pl-4 lg:pr-4 lg:pl-6">
             {loading
               ? Array.from({ length: 14 }).map((_, index) => (
                   <HourlyListItem key={index} loading={loading} />
@@ -836,7 +836,7 @@ const HourlyListItem = forwardRef<HTMLLIElement, HourlyListItemProps>(
   (props, ref) => {
     if (props.loading) {
       return (
-        <li className="flex h-10 w-full animate-pulse items-center justify-between rounded-lg border border-neutral-600 bg-neutral-700 px-2 py-1"></li>
+        <li className="flex h-10 w-full animate-pulse items-center justify-between rounded-lg border border-neutral-600 bg-neutral-700 px-2 py-1 lg:px-3 lg:py-2"></li>
       );
     }
 
