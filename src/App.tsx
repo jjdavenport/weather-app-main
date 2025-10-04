@@ -78,8 +78,6 @@ function App() {
       );
       const result = await response.json();
 
-      console.log("[fetchCity] API result:", result);
-
       if (result.length === 0) {
         setLoading(false);
         setError(true);

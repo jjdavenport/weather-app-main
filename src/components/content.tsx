@@ -339,11 +339,17 @@ export const Form = ({
   setSearching,
 }: FormProp) => {
   const [cities, setCities] = useState(null);
+  const [open, setOpen] = useState(false);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (input === "") {
+      setSearching(false);
+      return;
+    }
     setSearching(true);
     onSearch(input);
+    setOpen(false);
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -375,6 +381,8 @@ export const Form = ({
       className="flex w-full flex-col items-center gap-3 lg:w-7/12 lg:flex-row"
     >
       <Search
+        open={open}
+        setOpen={setOpen}
         searching={searching}
         setCities={setCities}
         onSearch={onSearch}
@@ -398,6 +406,8 @@ type SearchProps = {
   list: [];
   onSearch: (city: string) => void;
   setCities: React.Dispatch<React.SetStateAction<string[]>>;
+  open: boolean;
+  setOpen: React.Dispatch<SetStateAction<boolean>>;
 };
 
 const Search = ({
@@ -409,8 +419,9 @@ const Search = ({
   onSearch,
   setCities,
   searching,
+  open,
+  setOpen,
 }: SearchProps) => {
-  const [open, setOpen] = useState(false);
   const { citiesData } = useData();
   const inputRef = useRef(null);
 

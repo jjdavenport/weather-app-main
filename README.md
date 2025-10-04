@@ -132,7 +132,7 @@ Use this section to outline areas that you want to continue focusing on in futur
 ### Useful resources
 
 - [Tailwind scrollbar docs](https://adoxography.github.io/tailwind-scrollbar/) - These docs helped me configure tailwind scrollbar as I was unfamiliar with how to get it setup or if it was compatible with tailwind V4
-- [Example resource 2](https://www.example.com) - This is an amazing article which helped me finally understand XYZ. I'd recommend it to anyone still learning this concept.
+- [Nominatim docs](https://nominatim.org/release-docs/latest/api/Search/) - These page helped me config my fetch request when you search for a city, the response provides city, county , longitude and latitude.
 
 **Note: Delete this note and replace the list above with resources that helped you during the challenge. These could come in handy for anyone viewing your solution or for yourself when you look back on this project in the future.**
 
