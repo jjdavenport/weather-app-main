@@ -63,7 +63,6 @@ function App() {
 
   const fetchCity = async (search?: string) => {
     const city = search ?? input;
-    console.log("[fetchCity] called with:", city);
 
     if (!city) {
       return;
@@ -106,13 +105,9 @@ function App() {
   };
 
   const fetchLatLong = async () => {
-    console.log("[fetchLatLong] called");
-
     try {
       const response = await fetch("https://ipapi.co/json/");
       const result = await response.json();
-
-      console.log("[fetchLatLong] API result:", result);
 
       setLat(result.latitude);
       setLong(result.longitude);

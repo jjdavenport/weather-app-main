@@ -515,7 +515,6 @@ const SearchListItem = ({
   open,
 }: SearchListitemProp) => {
   const handleClick = (text: string) => {
-    console.log("[handleClick] clicked city:", text);
     onClick(text);
     setMenu(false);
   };

@@ -45,7 +45,7 @@ Users should be able to:
 
 ### Links
 
-- Solution URL: [Solution](https://www.frontendmentor.io/solutions/)
+- Solution URL: [Solution](https://www.frontendmentor.io/solutions/weather-app-fm30-hackathon-naXU4vQL1J)
 - Repo URL: [Solution](https://github.com/jjdavenport/weather-app-main)
 - Live Site URL: [Live site](https://jjdavenport.github.io/weather-app-main)
 
