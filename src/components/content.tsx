@@ -442,7 +442,6 @@ const Search = ({
     <>
       <div
         ref={buttonRef}
-        onFocus={() => setOpen(true)}
         onClick={handleClick}
         className="focus-within:outline-neutral-0 relative flex w-11/12 cursor-pointer gap-4 rounded-lg bg-neutral-800 px-4 py-2 transition-colors focus-within:outline-2 focus-within:outline-offset-[0.1875rem] hover:bg-neutral-700 lg:w-full"
       >
