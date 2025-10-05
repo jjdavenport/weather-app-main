@@ -125,14 +125,14 @@ If you want more help with writing markdown, we'd recommend checking out [The Ma
 
 ### Continued development
 
-After completion of this challenge, I'm planning on learning how to use Figma, so the ui matches the specification exactly.
+After completion of this challenge, I'm planning on learning how to use Figma, so the ui matches the specification exactly, I also need to build some unit tests with Vitest.
 
 Use this section to outline areas that you want to continue focusing on in future projects. These could be concepts you're still not completely comfortable with or techniques you found useful that you want to refine and perfect.
 
 ### Useful resources
 
 - [Tailwind scrollbar docs](https://adoxography.github.io/tailwind-scrollbar/) - These docs helped me configure tailwind scrollbar as I was unfamiliar with how to get it setup or if it was compatible with tailwind V4
-- [Nominatim docs](https://nominatim.org/release-docs/latest/api/Search/) - These page helped me config my fetch request when you search for a city, the response provides city, county , longitude and latitude.
+- [Nominatim docs](https://nominatim.org/release-docs/latest/api/Search/) - These page helped me configure my fetch request when you search for a city, the response provides city, county , longitude and latitude.
 
 **Note: Delete this note and replace the list above with resources that helped you during the challenge. These could come in handy for anyone viewing your solution or for yourself when you look back on this project in the future.**
 

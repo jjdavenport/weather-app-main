@@ -206,11 +206,13 @@ const HeaderMenu = ({
 
   return (
     <div
+      aria-expanded={open}
       ref={ref}
       data-state={open ? "open" : "closed"}
       className={`data-[state=open]:fade-in-0 data-[state=closed]:fade-out-0 absolute top-16 right-0 z-40 flex w-full flex-col rounded-lg border border-neutral-600 bg-neutral-800 p-2 shadow-lg transition-all duration-200 data-[state=closed]:pointer-events-none data-[state=closed]:scale-95 data-[state=closed]:opacity-0 data-[state=open]:pointer-events-auto data-[state=open]:scale-100 data-[state=open]:opacity-100 lg:w-3/12`}
     >
       <button
+        tabIndex={open ? 0 : -1}
         onClick={handleUnitClick}
         className="text-neutral-0 focus:outline-neutral-0 cursor-pointer rounded-lg px-2 py-1 text-left hover:bg-neutral-700 focus:outline focus:outline-offset-1"
       >
@@ -281,15 +283,18 @@ type HeaderListButtonProp = {
   text: string;
   selected: string;
   onClick: () => void;
+  open: boolean;
 };
 
 const HeaderListButton = ({
   text,
   selected,
   onClick,
+  open,
 }: HeaderListButtonProp) => {
   return (
     <button
+      tabIndex={open ? 0 : -1}
       onClick={() => onClick(text)}
       className={`${selected === text ? "bg-neutral-700" : "hover:bg-neutral-700"} text-neutral-0 focus:outline-neutral-0 flex cursor-pointer justify-between rounded-lg px-2 py-1 text-left transition-colors focus:outline focus:outline-offset-1`}
     >
@@ -437,6 +442,7 @@ const Search = ({
     <>
       <div
         ref={buttonRef}
+        onFocus={() => setOpen(true)}
         onClick={handleClick}
         className="focus-within:outline-neutral-0 relative flex w-11/12 cursor-pointer gap-4 rounded-lg bg-neutral-800 px-4 py-2 transition-colors focus-within:outline-2 focus-within:outline-offset-[0.1875rem] hover:bg-neutral-700 lg:w-full"
       >
@@ -470,29 +476,29 @@ const SearchList = ({
   open,
 }: {
   ref: RefObject<HTMLUListElement>;
-  list: [];
+  list: string[];
   onSearch: (city: string) => void;
   setMenu: React.Dispatch<SetStateAction<boolean>>;
   open: boolean;
-  setSearching: React.Dispatch<SetStateAction<boolean>>;
 }) => {
   return (
-    <>
-      <ul
-        data-state={open ? "open" : "closed"}
-        ref={ref}
-        className={`absolute top-28 left-0 w-full flex-col gap-1 rounded-lg bg-neutral-800 p-2 shadow-lg transition-all duration-200 data-[state=closed]:pointer-events-none data-[state=closed]:scale-95 data-[state=closed]:opacity-0 data-[state=open]:pointer-events-auto data-[state=open]:scale-100 data-[state=open]:opacity-100 lg:top-14 ${list.length === 0 ? "hidden" : "flex"}`}
-      >
-        {list.map((i, index) => (
-          <SearchListItem
-            onClick={onSearch}
-            setMenu={setMenu}
-            text={i}
-            key={index}
-          />
-        ))}
-      </ul>
-    </>
+    <ul
+      aria-expanded={open}
+      data-state={open ? "open" : "closed"}
+      ref={ref}
+      aria-hidden={!open}
+      className={`absolute top-28 left-0 w-full flex-col gap-1 rounded-lg bg-neutral-800 p-2 shadow-lg transition-all duration-200 lg:top-14 ${open ? "pointer-events-auto scale-100 opacity-100" : "pointer-events-none scale-95 opacity-0"} ${list.length === 0 ? "hidden" : "flex"} `}
+    >
+      {list.map((i, index) => (
+        <SearchListItem
+          key={index}
+          open={open}
+          onClick={onSearch}
+          setMenu={setMenu}
+          text={i}
+        />
+      ))}
+    </ul>
   );
 };
 
@@ -500,9 +506,15 @@ type SearchListitemProp = {
   text: string;
   onClick: (text: string) => void;
   setMenu: React.Dispatch<SetStateAction<boolean>>;
+  open: boolean;
 };
 
-const SearchListItem = ({ text, onClick, setMenu }: SearchListitemProp) => {
+const SearchListItem = ({
+  text,
+  onClick,
+  setMenu,
+  open,
+}: SearchListitemProp) => {
   const handleClick = (text: string) => {
     console.log("[handleClick] clicked city:", text);
     onClick(text);
@@ -513,6 +525,7 @@ const SearchListItem = ({ text, onClick, setMenu }: SearchListitemProp) => {
     <>
       <li>
         <button
+          tabIndex={open ? 0 : -1}
           type="button"
           onClick={() => handleClick(text)}
           className="text-neutral-0 focus:outline-neutral-0 w-full cursor-pointer rounded-lg p-1 outline-neutral-600 hover:bg-neutral-700 hover:outline focus:outline focus:outline-offset-1 lg:px-2 lg:text-left"
@@ -778,6 +791,7 @@ export const HourlyList = ({
   menuRef,
 }: HourlyListProp) => {
   const [menu, setMenu] = useState(false);
+  const listRef = useRef<HTMLDivElement | null>(null);
   const timeRef = useRef<HTMLLIElement | null>(null);
 
   useClick({ open: menu, setOpen: setMenu, menuRef, buttonRef });
@@ -810,7 +824,11 @@ export const HourlyList = ({
             setState={setDay}
           />
         </div>
-        <div className="scrollbar-thin scrollbar-thumb-neutral-700 max-h-[28rem] overflow-auto lg:max-h-[50rem]">
+        <div
+          tabIndex={-1}
+          ref={listRef}
+          className="scrollbar-thin scrollbar-thumb-neutral-700 max-h-[28rem] overflow-auto focus:outline-none lg:max-h-[50rem]"
+        >
           <ul className="flex flex-col gap-6 pr-2 pb-4 pl-4 lg:pr-4 lg:pl-6">
             {loading
               ? Array.from({ length: 14 }).map((_, index) => (
@@ -945,6 +963,7 @@ const HourlyDropDownList = ({
           }),
         ).map((i, index) => (
           <HourlyDropDownButton
+            open={open}
             state={state}
             onClick={handleClick}
             key={index}
@@ -960,17 +979,20 @@ type HourlyDropDownButtonProp = {
   text: string;
   onClick: () => void;
   state: string;
+  open: boolean;
 };
 
 const HourlyDropDownButton = ({
   text,
   onClick,
   state,
+  open,
 }: HourlyDropDownButtonProp) => {
   return (
     <>
       <li>
         <button
+          tabIndex={open ? 0 : -1}
           className={`${state === text ? "bg-neutral-700" : "bg-transparent"} focus:outline-neutral-0 w-full cursor-pointer rounded-lg p-1 transition-colors hover:bg-neutral-700 focus:outline focus:outline-offset-1 lg:px-2 lg:text-left`}
           onClick={() => onClick(text)}
         >
