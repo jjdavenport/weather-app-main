@@ -799,7 +799,12 @@ export const HourlyList = ({
   const currentTime = date.getHours() % 12 === 0 ? 12 : date.getHours() % 12;
 
   useEffect(() => {
-    timeRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (listRef.current && timeRef.current) {
+      const parent = listRef.current;
+      const child = timeRef.current;
+      const offsetTop = child.offsetTop - parent.offsetTop;
+      parent.scrollTo({ top: offsetTop, behavior: "smooth" });
+    }
   }, [loading, data]);
 
   return (

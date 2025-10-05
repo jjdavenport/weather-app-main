@@ -288,16 +288,6 @@ function App() {
     }
   }, [results, error]);
 
-  useEffect(() => {
-    console.log(searchList);
-    console.log(city);
-    console.log(country);
-  }, [searchList, city, country]);
-
-  useEffect(() => {
-    console.log(results);
-  }, [results]);
-
   return (
     <Wrapper>
       <Container>
