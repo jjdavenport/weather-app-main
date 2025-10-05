@@ -41,17 +41,16 @@ Users should be able to:
 
 ![](./screenshot.jpg)
 
-**Note: Delete this note and the paragraphs above when you add your screenshot. If you prefer not to add a screenshot, feel free to remove this entire section.**
-
 ### Links
 
 - Solution URL: [Solution](https://www.frontendmentor.io/solutions/weather-app-fm30-hackathon-naXU4vQL1J)
-- Repo URL: [Solution](https://github.com/jjdavenport/weather-app-main)
+- Repo URL: [Repo](https://github.com/jjdavenport/weather-app-main)
 - Live Site URL: [Live site](https://jjdavenport.github.io/weather-app-main)
 
 ## My process
 
-First step is too build the components and add necessary dependencies. Next I add the basic UI functionality which is basicly the drop down menus. Then its just a question of fetching from the open-meteo API and destructuring the data and mapping it on the various components.
+First step is too build the components and add necessary dependencies. Next I add the basic UI functionality which is basicly the drop down menus. Then its just a question of fetching from the open-meteo API and destructuring the data and mapping it on the various components. Then I added a function to fetch the users IP address this returns the
+Longitude and latitude of the users IP which is stored in state and then the function to fetch with the open-meteo API is called with an effect giving the user a forecast as soon as the page loads. Finally I make a function to fetch a cities longitude and latitude with the Nominatim API when a user searches or uses the built in search list which is filtered onChange and is called with the onSubmit or onSelect props on the form or search list respectively.
 
 ### Built with
 
@@ -64,8 +63,6 @@ First step is too build the components and add necessary dependencies. Next I ad
 - [tailwind css](https://tailwindcss.com/) - For styles
 - [tailwind-scrollbar](https://github.com/adoxography/tailwind-scrollbar) - Hourly list scrollbar
 - [lucide react](https://lucide.dev/) - Icons
-
-**Note: These are just examples. Delete this note and replace the list above with your own choices**
 
 ### What I learned
 
