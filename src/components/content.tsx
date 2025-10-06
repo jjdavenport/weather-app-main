@@ -124,7 +124,7 @@ const HeaderDropdown = ({ onClick, open, ref }: HeaderDropdownProps) => {
       <button
         ref={ref}
         onClick={onClick}
-        className="font-DM-Sans text-neutral-0 focus:outline-neutral-0 flex cursor-pointer gap-2 rounded-lg bg-neutral-800 px-3 py-1 transition-colors hover:bg-neutral-700 focus:outline-2 focus:outline-offset-[0.1875rem]"
+        className="font-DM-Sans text-neutral-0 focus:outline-neutral-0 flex cursor-pointer items-center gap-2 rounded-lg bg-neutral-800 px-3 py-1 transition-colors hover:bg-neutral-700 focus:outline-2 focus:outline-offset-[0.1875rem]"
       >
         <img className="object-contain" src={settings} alt="settings" />
         Units
@@ -296,12 +296,12 @@ const HeaderListButton = ({
     <button
       tabIndex={open ? 0 : -1}
       onClick={() => onClick(text)}
-      className={`${selected === text ? "bg-neutral-700" : "hover:bg-neutral-700"} text-neutral-0 focus:outline-neutral-0 flex cursor-pointer justify-between rounded-lg px-2 py-1 text-left transition-colors focus:outline focus:outline-offset-1`}
+      className={`${selected === text ? "bg-neutral-700" : "hover:bg-neutral-700"} text-neutral-0 focus:outline-neutral-0 flex cursor-pointer items-center justify-between rounded-lg px-2 py-1 text-left transition-colors focus:outline focus:outline-offset-1`}
     >
       {selected === text ? (
         <>
           {text}
-          <img src={tick} alt="tick" />
+          <img className="object-contain" src={tick} alt="tick" />
         </>
       ) : (
         <>{text}</>
@@ -916,7 +916,7 @@ const HourlyDropDown = ({
         <button
           ref={ref}
           onClick={onClick}
-          className="font-DM-Sans text-neutral-0 focus:outline-neutral-0 flex cursor-pointer gap-2 rounded-lg bg-neutral-600 px-3 py-1 transition-colors hover:bg-neutral-700 focus:outline-2 focus:outline-offset-[0.1875rem]"
+          className="font-DM-Sans text-neutral-0 focus:outline-neutral-0 flex cursor-pointer items-center gap-2 rounded-lg bg-neutral-600 px-3 py-1 transition-colors hover:bg-neutral-700 focus:outline-2 focus:outline-offset-[0.1875rem]"
         >
           {loading ? "-" : text}{" "}
           <img
